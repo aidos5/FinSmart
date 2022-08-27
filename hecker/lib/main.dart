@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hecker/MainPage.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:passwordfield/passwordfield.dart';
-import 'Signup.dart';
+import 'Number.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,8 +18,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+          appBarTheme: AppBarTheme(
+            color: HexColor('#4cbfa6'),
+            centerTitle: true,
+            titleTextStyle: GoogleFonts.poppins(
+              textStyle: TextStyle(fontSize: 37),
+            ),
+          ),
+          scaffoldBackgroundColor: HexColor('#f6ebf4'),
+          textTheme: GoogleFonts.poppinsTextTheme()),
       home: LoginPage(),
     );
   }
@@ -45,19 +53,16 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
         title: Text(
           'FinSmart',
-          style: GoogleFonts.poppins(
-            textStyle: TextStyle(fontSize: 37),
-          ),
         ),
-        backgroundColor: HexColor('#4cbfa6'),
       ),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Container(
           width: screenwidth,
           height: screenheight,
-          color: HexColor('#f6ebf4'),
           child: Column(
+            //crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 'Shop Name',
@@ -129,7 +134,11 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: (() {}),
+                  onPressed: (() {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => MainPage()),
+                        (route) => false);
+                  }),
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                     HexColor('#ed0b70'),
@@ -153,21 +162,21 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               TextButton(
+                  onPressed: (() {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => Number()),
+                        (route) => false);
+                  }),
                   child: Text(
                     'Sign In',
                     style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                         fontSize: 24,
                         color: Colors.blue,
                         decoration: (TextDecoration.underline),
                       ),
                     ),
-                  ),
-                  onPressed: (() {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Signup()),
-                        (route) => false);
-                  })),
+                  )),
             ],
           ),
         ),
