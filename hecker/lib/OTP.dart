@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:hecker/Password.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 class OTP extends StatefulWidget {
   OTP({Key? key}) : super(key: key);
 
@@ -40,7 +42,7 @@ class _OTPState extends State<OTP> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: OtpTextField(
-                numberOfFields: 5,
+                numberOfFields: 6,
                 enabledBorderColor: Colors.black,
                 //set to true to show as box or false to show as dash
                 showFieldAsBox: true,
