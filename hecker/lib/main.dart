@@ -162,21 +162,22 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               TextButton(
-                  onPressed: (() {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Number()),
-                        (route) => false);
-                  }),
-                  child: Text(
-                    'Sign In',
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                        fontSize: 24,
-                        color: Colors.blue,
-                        decoration: (TextDecoration.underline),
-                      ),
+                onPressed: (() {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => Number()),
+                      (route) => false);
+                }),
+                child: Text(
+                  'Sign In',
+                  style: GoogleFonts.poppins(
+                    textStyle: const TextStyle(
+                      fontSize: 24,
+                      color: Colors.blue,
+                      decoration: (TextDecoration.underline),
                     ),
-                  )),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
