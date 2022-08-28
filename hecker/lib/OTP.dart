@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:hecker/Password.dart';
@@ -7,11 +8,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 class OTP extends StatefulWidget {
   OTP({Key? key}) : super(key: key);
 
+  String? phoneNo;
+  OTP.withPh({required this.phoneNo});
+
   @override
-  State<OTP> createState() => _OTPState();
+  State<OTP> createState() => _OTPState(phoneNo: phoneNo);
 }
 
 class _OTPState extends State<OTP> {
+  String? phoneNo;
+  _OTPState({required this.phoneNo});
+
+  String? verificationCode;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    verifyPhoneNumber();
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenwidth = MediaQuery.of(context).size.width;
@@ -47,7 +63,17 @@ class _OTPState extends State<OTP> {
                 //set to true to show as box or false to show as dash
                 showFieldAsBox: true,
                 //runs when every textfield is filled
-                onSubmit: (String verificationCode) {}, // end onSubmit
+                onSubmit: (String pin) async {
+                  PhoneAuthCredential cred = PhoneAuthProvider.credential(
+                      verificationId: verificationCode ?? "", smsCode: pin);
+                  await FirebaseAuth.instance
+                      .signInWithCredential(cred)
+                      .then((value) async {
+                    if (value.user != null) {
+                      print("You are logged in!\n" + value.toString());
+                    }
+                  });
+                }, // end onSubmit
               ),
             ),
             RaisedButton(
@@ -66,5 +92,32 @@ class _OTPState extends State<OTP> {
         ),
       ),
     );
+  }
+
+  verifyPhoneNumber() async {
+    print(phoneNo);
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: "+91${phoneNo}",
+        verificationCompleted: (PhoneAuthCredential cred) async {
+          await FirebaseAuth.instance
+              .signInWithCredential(cred)
+              .then((value) async {
+            if (value.user != null) {
+              print("You are logged in!\n" + value.toString());
+            }
+          });
+        },
+        verificationFailed: (verificationFailed) {
+          print("Verification Failed! Message = " +
+              verificationFailed.message.toString());
+        },
+        codeSent: (String codeSent, int? resendToken) {
+          print("YOYO : " + codeSent);
+          verificationCode = codeSent;
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          verificationCode = verificationId;
+        },
+        timeout: Duration(seconds: 60));
   }
 }

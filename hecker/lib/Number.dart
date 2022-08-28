@@ -98,7 +98,7 @@ class _NumberState extends State<Number> {
                               onPressed: () {
                                 Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
-                                        builder: (context) => OTP()),
+                                        builder: (context) => OTP.withPh(phoneNo: mobileNumber.text,)),
                                     (route) => false);
                               },
                               child: const Text('YES'),

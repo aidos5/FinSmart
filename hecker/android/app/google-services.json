@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "52372229418",
+    "project_id": "finsmart-e8df4",
+    "storage_bucket": "finsmart-e8df4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52372229418:android:07130b99457e4a9a076253",
+        "android_client_info": {
+          "package_name": "com.example.hecker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "52372229418-oilntv6625lusnen1lq8en2l8dtv8hpi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5ug04_apQ-vJTPpKWMUQEhejDttG2lc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "52372229418-oilntv6625lusnen1lq8en2l8dtv8hpi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

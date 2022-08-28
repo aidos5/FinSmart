@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>52372229418-mhpseffkj6v6nd93h449jfrbrbg5gftr.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.52372229418-mhpseffkj6v6nd93h449jfrbrbg5gftr</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAGHRJFFwep1ndEKGTbdgrytF6dVfXd-fE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>52372229418</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.hecker</string>
+	<key>PROJECT_ID</key>
+	<string>finsmart-e8df4</string>
+	<key>STORAGE_BUCKET</key>
+	<string>finsmart-e8df4.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:52372229418:ios:4dd73b99a8b655a3076253</string>
+</dict>
+</plist>
