@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        centerTitle: true,
+        centerTitle: false,
         title: Text(
           'FinSmart',
         ),
