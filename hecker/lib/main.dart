@@ -143,16 +143,12 @@ class _LoginPageState extends State<LoginPage> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
+                child: MaterialButton(
                   onPressed: (() {
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context) => MainPage()),
                         (route) => false);
                   }),
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                    HexColor('#ed0b70'),
-                  )),
                   child: Text(
                     'LOGIN',
                     style: GoogleFonts.poppins(

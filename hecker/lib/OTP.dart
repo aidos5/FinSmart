@@ -76,7 +76,7 @@ class _OTPState extends State<OTP> {
                 }, // end onSubmit
               ),
             ),
-            RaisedButton(
+            MaterialButton(
                 color: Colors.redAccent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50.0),

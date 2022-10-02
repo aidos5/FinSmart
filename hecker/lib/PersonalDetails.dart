@@ -93,7 +93,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                             SizedBox(
                               width: 10,
                             ),
-                            ElevatedButton(
+                            MaterialButton(
                               onPressed: () async {
                                 newDate = await showDatePicker(
                                     context: context,
@@ -117,7 +117,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                     ),
                     SizedBox(
                       height: screenheight / 15,
-                      child: RaisedButton(
+                      child: MaterialButton(
                         color: Colors.redAccent,
                         onPressed: () {
                           if (formkey.currentState!.validate()) {
