@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hecker/AddProduct.dart';
 
 class Navigation extends StatefulWidget {
   Navigation({Key? key}) : super(key: key);
@@ -43,7 +44,9 @@ class _NavigationState extends State<Navigation> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => AddProduct()),
+                    (route) => false);
               },
             ),
             ListTile(
