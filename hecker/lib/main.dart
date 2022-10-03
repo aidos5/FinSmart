@@ -149,6 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                         MaterialPageRoute(builder: (context) => MainPage()),
                         (route) => false);
                   }),
+                  color: HexColor('#ed0b70'),
                   child: Text(
                     'LOGIN',
                     style: GoogleFonts.poppins(
