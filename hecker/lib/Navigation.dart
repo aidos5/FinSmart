@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hecker/AddProduct.dart';
+import 'package:hecker/Items.dart';
 import 'package:hecker/main.dart';
 
 class Navigation extends StatefulWidget {
@@ -46,7 +46,7 @@ class _NavigationState extends State<Navigation> {
               ),
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => AddProduct()),
+                    MaterialPageRoute(builder: (context) => Items()),
                     (route) => false);
               },
             ),

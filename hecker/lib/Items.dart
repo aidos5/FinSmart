@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:hecker/AddItems.dart';
 import 'package:hecker/Navigation.dart';
 
-class AddProduct extends StatefulWidget {
-  AddProduct({Key? key}) : super(key: key);
+class Items extends StatefulWidget {
+  Items({Key? key}) : super(key: key);
 
   @override
-  State<AddProduct> createState() => _AddProductState();
+  State<Items> createState() => _ItemsState();
 }
 
-class _AddProductState extends State<AddProduct> {
+class _ItemsState extends State<Items> {
   @override
   Widget build(BuildContext context) {
     final screenwidth = MediaQuery.of(context).size.width;
     final screenheight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      floatingActionButton: FloatingActionButton(
+        onPressed: (() {Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => AddItems()),
+                    (route) => false);}),
+        child: Icon(Icons.add),
+      ),
       appBar: AppBar(title: Text('FinSmart')),
       drawer: Navigation(),
       body: SingleChildScrollView(
@@ -24,9 +31,7 @@ class _AddProductState extends State<AddProduct> {
           height: screenheight,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              
-            ],
+            children: [],
           ),
         ),
       ),
