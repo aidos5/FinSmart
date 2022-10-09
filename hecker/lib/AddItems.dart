@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hecker/Items.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'Model/ModelItem.dart';
@@ -30,6 +31,17 @@ class _AddItemsState extends State<AddItems> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         centerTitle: true,
+        leading: MaterialButton(
+          onPressed: (() {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Items()),
+                (route) => false);
+          }),
+          child: Icon(
+            Icons.arrow_back_sharp,
+            color: Colors.white,
+          ),
+        ),
         title: Text(
           'FinSmart',
           style: TextStyle(fontSize: 37),
@@ -78,8 +90,7 @@ class _AddItemsState extends State<AddItems> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: const InputDecoration(
-                      labelText: 'Selling Pricet',
-                      border: OutlineInputBorder()),
+                      labelText: 'Selling Price', border: OutlineInputBorder()),
                   controller: sellingPrice,
                 ),
               ),
@@ -128,10 +139,10 @@ class _AddItemsState extends State<AddItems> {
 
     final doc = item.toJson();
     final docuser = FirebaseFirestore.instance
-        .collection('finsmart_transactions')
-        .doc('finsmart_transactions_pincode')
-        .collection('finsmart_transactions_shopid')
-        .doc('generalDetails')
+        .collection('transactions')
+        .doc('category')
+        .collection('pincode')
+        .doc('shopid')
         .collection('items')
         .doc('${itemName.text + '_' + unit.text}');
 

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ModelItem {
   String name;
   int quantity;
@@ -29,4 +31,14 @@ class ModelItem {
         'expDate': expDate,
         'price': price
       };
+
+      static ModelItem fromJson(Map<String, dynamic> json) => ModelItem(
+      name: json['name'],
+      quantity: json['quantity'],
+      minimumQuantity: json['minimumQuantity'],
+      unit: json['unit'],
+      sellingPrice: json['sellingPrice'],
+      taxes: json['taxes'],
+      expDate: (json['expDate'] as Timestamp).toDate(),
+      price: json['price']);
 }
