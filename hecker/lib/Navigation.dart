@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hecker/Items.dart';
+import 'package:hecker/main.dart';
 
 class Navigation extends StatefulWidget {
   Navigation({Key? key}) : super(key: key);
@@ -43,7 +45,9 @@ class _NavigationState extends State<Navigation> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => Items()),
+                    (route) => false);
               },
             ),
             ListTile(
@@ -76,7 +80,9 @@ class _NavigationState extends State<Navigation> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    (route) => false);
               },
             ),
             ListTile(

@@ -37,7 +37,7 @@ class _AccountDoneState extends State<AccountDone> {
               ),
               SizedBox(
                 height: screenheight / 10,
-                child: RaisedButton(
+                child: MaterialButton(
                   color: Colors.redAccent,
                   onPressed: () {
                     Navigator.of(context).pushAndRemoveUntil(
