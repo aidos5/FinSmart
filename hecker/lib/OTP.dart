@@ -71,23 +71,26 @@ class _OTPState extends State<OTP> {
                       .then((value) async {
                     if (value.user != null) {
                       print("You are logged in!\n" + value.toString());
+                      Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => Password()),
+                      (route) => false);
                     }
                   });
                 }, // end onSubmit
               ),
             ),
-            RaisedButton(
-                color: Colors.redAccent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50.0),
-                ),
-                textColor: Colors.white,
-                child: Text("Submit"),
-                onPressed: (() {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => Password()),
-                      (route) => false);
-                }))
+            // RaisedButton(
+            //     color: Colors.redAccent,
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(50.0),
+            //     ),
+            //     textColor: Colors.white,
+            //     child: Text("Submit"),
+            //     onPressed: (() {
+            //       Navigator.of(context).pushAndRemoveUntil(
+            //           MaterialPageRoute(builder: (context) => Password()),
+            //           (route) => false);
+            //     }))
           ]),
         ),
       ),
