@@ -1,5 +1,10 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:hecker/Model/UserCredential.dart';
 import 'package:hecker/ShopDetails.dart';
+
+import 'package:localstorage/localstorage.dart';
 
 class PersonalDetails extends StatefulWidget {
   PersonalDetails({Key? key}) : super(key: key);
@@ -12,8 +17,34 @@ class _PersonalDetailsState extends State<PersonalDetails> {
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   List<String> Genders = ['Select Gender', 'Male', 'Female', 'I am Gay'];
   String? selectedGender = 'Select Gender';
-  DateTime? dateTime = DateTime.now();
+  DateTime? dob = DateTime.now();
   DateTime? newDate;
+  bool? isOwner = false;
+
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController addressController = new TextEditingController();
+
+  final localStorage = new LocalStorage('userCred.json');
+
+  UserCredential? userCred;
+  bool isInit = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    GetUserCred();
+  }
+
+  void GetUserCred() async {
+    var uC = await localStorage.getItem('user');
+    if (uC == null) {
+      await localStorage.setItem('user', new UserCredential());
+    }
+
+    userCred = await UserCredential.fromJson(localStorage.getItem('user'));
+
+    print(userCred?.toJson());
+    isInit = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +71,27 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                   shrinkWrap: true,
                   children: [
                     TextFormField(
+                      controller: nameController,
                       decoration: const InputDecoration(
                           labelText: 'Your Name', border: OutlineInputBorder()),
                       validator: (value) {
                         if (value != null && value.isEmpty) {
                           return 'Enter Your Name';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    TextFormField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 5,
+                      controller: addressController,
+                      decoration: const InputDecoration(
+                          labelText: 'Your Address',
+                          border: OutlineInputBorder()),
+                      validator: (value) {
+                        if (value != null && value.isEmpty) {
+                          return 'Enter Your Address';
                         } else {
                           return null;
                         }
@@ -97,31 +144,68 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                               onPressed: () async {
                                 newDate = await showDatePicker(
                                     context: context,
-                                    initialDate: dateTime!,
-                                    firstDate: DateTime(2000),
+                                    initialDate: dob!,
+                                    firstDate: DateTime(1900),
                                     lastDate: DateTime(2200));
 
                                 if (newDate == null)
                                   return;
                                 else {
-                                  setState(() => dateTime = newDate);
+                                  setState(() => dob = newDate);
                                 }
                               },
-                              child: Text('${dateTime!.day}/'
-                                  '${dateTime!.month}/'
-                                  '${dateTime!.year}'),
+                              child: Text('${dob!.day}/'
+                                  '${dob!.month}/'
+                                  '${dob!.year}'),
                             )
                           ],
                         ),
                       ),
                     ),
+                    CheckboxListTile(
+                        title: Text("Regester as Owner"),
+                        value: isOwner,
+                        onChanged: (value) {
+                          setState(() {
+                            isOwner = value;
+                          });
+                        }),
                     SizedBox(
                       height: screenheight / 15,
                       child: MaterialButton(
                         color: Colors.redAccent,
-                        onPressed: () {
+                        onPressed: () async {
                           if (formkey.currentState!.validate()) {
                             //print("successful");
+
+                            // Set basic details
+                            userCred!.name = nameController.text;
+                            userCred!.gender = selectedGender;
+                            userCred!.dob =
+                                '${dob!.day}/${dob!.month}/${dob!.year}';
+                            userCred!.regDate = DateTime.now().toString();
+                            userCred!.isOwner = isOwner;
+                            userCred!.address = addressController.text;
+
+                            // If owner set shop id
+                            if (isOwner!) {
+                              String? id =
+                                  (int.tryParse(userCred!.phoneNo!)! * 37)
+                                      .toString();
+
+                              int iterCount = 12 - id.length;
+                              for (int i = 0; i < iterCount; i++) {
+                                id = "0" + id!;
+                              }
+
+                              userCred!.shopID = id!;
+                            }
+
+                            // Store User Creds
+                            await localStorage.setItem('user', userCred);
+
+                            print(await localStorage.getItem('user'));
+
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (context) => ShopDetails()),

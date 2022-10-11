@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hecker/OTP.dart';
 import 'main.dart';
+
+import 'Model/UserCredential.dart';
+import 'package:localstorage/localstorage.dart';
+
 class Number extends StatefulWidget {
   const Number();
 
@@ -11,6 +15,29 @@ class Number extends StatefulWidget {
 
 class _NumberState extends State<Number> {
   final TextEditingController mobileNumber = TextEditingController();
+
+  final localStorage = new LocalStorage('userCred.json');
+
+  UserCredential? userCred;
+  bool isInit = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    GetUserCred();
+  }
+
+  void GetUserCred() async {
+    var uC = await localStorage.getItem('user');
+    if (uC == null) {
+      await localStorage.setItem('user', new UserCredential());
+    }
+
+    userCred = await UserCredential.fromJson(localStorage.getItem('user'));
+
+    print(userCred?.toJson());
+    isInit = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenwidth = MediaQuery.of(context).size.width;
@@ -95,10 +122,18 @@ class _NumberState extends State<Number> {
                               child: const Text('NO'),
                             ),
                             TextButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                // Set User Cred
+                                userCred!.phoneNo = mobileNumber.text;
+
+                                // Store data in local storage
+                                await localStorage.setItem('user', userCred);
+
                                 Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
-                                        builder: (context) => OTP.withPh(phoneNo: mobileNumber.text,)),
+                                        builder: (context) => OTP.withPh(
+                                              phoneNo: mobileNumber.text,
+                                            )),
                                     (route) => false);
                               },
                               child: const Text('YES'),

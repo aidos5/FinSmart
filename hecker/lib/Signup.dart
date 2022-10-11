@@ -4,6 +4,8 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter/services.dart';
 import 'main.dart';
 
+import 'UI/LoginPage.dart';
+
 class Signup extends StatefulWidget {
   const Signup();
 
@@ -160,7 +162,6 @@ class _SignupState extends State<Signup> {
             SizedBox(
               height: screenheight / 15,
               child: MaterialButton(
-                
                 color: Colors.redAccent,
                 onPressed: () {
                   if (_formkey.currentState!.validate()) {
