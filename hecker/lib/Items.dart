@@ -23,6 +23,8 @@ class _ItemsState extends State<Items> {
         allItems.add(i);
       }
     });
+
+    foundItems = List.from(allItems);
     super.initState();
   }
 
@@ -50,7 +52,6 @@ class _ItemsState extends State<Items> {
               if (snapshot.hasError) {
                 return Text('There is an error ${snapshot.error}');
               } else if (snapshot.hasData) {
-                foundItems = List.from(allItems);
                 return Column(
                   children: [
                     TextField(
@@ -137,7 +138,7 @@ class _ItemsState extends State<Items> {
     if (query.isEmpty) {
       results.addAll(allItems);
     } else {
-      results = foundItems.where((item) {
+      results = allItems.where((item) {
         final itemName = item.name.toLowerCase();
         query = query.toLowerCase();
         return itemName.contains(query);
