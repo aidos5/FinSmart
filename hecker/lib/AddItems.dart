@@ -133,8 +133,7 @@ class _AddItemsState extends State<AddItems> {
       sellingPrice: int.parse(sellingPrice.text),
       taxes: int.parse(taxes.text),
       expDate: DateTime.now(),
-      price: int.parse(quantity.text) *
-          (int.parse(sellingPrice.text) - int.parse(taxes.text)),
+      itemPrice: (int.parse(sellingPrice.text) - int.parse(taxes.text)),
     );
 
     final doc = item.toJson();

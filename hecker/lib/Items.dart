@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hecker/AddItems.dart';
 import 'package:hecker/Model/ModelItem.dart';
 
 class Items extends StatefulWidget {
@@ -41,6 +42,14 @@ class _ItemsState extends State<Items> {
           'FinSmart',
           style: TextStyle(fontSize: 37),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => AddItems()),
+              (route) => false);
+        },
+        child: Icon(Icons.add),
       ),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -105,7 +114,7 @@ class _ItemsState extends State<Items> {
                                     'Selling Price : ',
                                     style: TextStyle(fontSize: 20),
                                   ),
-                                  Text('${foundItems[index].price}',
+                                  Text('${foundItems[index].itemPrice}',
                                       style: TextStyle(fontSize: 20)),
                                 ],
                               ),
