@@ -8,7 +8,7 @@ class ModelItem {
   int sellingPrice;
   int taxes;
   DateTime expDate;
-  int price;
+  int itemPrice;
 
   ModelItem({
     required this.name,
@@ -18,7 +18,7 @@ class ModelItem {
     required this.sellingPrice,
     this.taxes = 0,
     required this.expDate,
-    required this.price,
+    required this.itemPrice,
   });
 
   Map<String, dynamic> toJson() => {
@@ -29,16 +29,17 @@ class ModelItem {
         'sellingPrice': sellingPrice,
         'taxes': taxes,
         'expDate': expDate,
-        'price': price
+        'itemPrice': (sellingPrice - taxes),
       };
 
-      static ModelItem fromJson(Map<String, dynamic> json) => ModelItem(
-      name: json['name'],
-      quantity: json['quantity'],
-      minimumQuantity: json['minimumQuantity'],
-      unit: json['unit'],
-      sellingPrice: json['sellingPrice'],
-      taxes: json['taxes'],
-      expDate: (json['expDate'] as Timestamp).toDate(),
-      price: json['price']);
+  static ModelItem fromJson(Map<String, dynamic> json) => ModelItem(
+        name: json['name'],
+        quantity: json['quantity'],
+        minimumQuantity: json['minimumQuantity'],
+        unit: json['unit'],
+        sellingPrice: json['sellingPrice'],
+        taxes: json['taxes'],
+        expDate: (json['expDate'] as Timestamp).toDate(),
+        itemPrice: json['itemPrice'],
+      );
 }
