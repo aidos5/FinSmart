@@ -28,7 +28,7 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: HexColor('#4cbfa6'),
       ),
       drawer: Navigation(),
-      body: Container(
+      body: SizedBox(
         width: screenwidth,
         child: Column(
           children: [
@@ -142,11 +142,12 @@ class _CounterState extends State<CounterBar> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            decoration: BoxDecoration(
-                color: Color.fromARGB(255, 192, 178, 178),
-                borderRadius: BorderRadius.circular(10)),
-            child: Row(children: <Widget>[
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+          decoration: BoxDecoration(
+              color: Color.fromARGB(255, 192, 178, 178),
+              borderRadius: BorderRadius.circular(10)),
+          child: Row(
+            children: <Widget>[
               IconButton(
                 icon: const Icon(Icons.remove),
                 onPressed: () {
@@ -172,8 +173,9 @@ class _CounterState extends State<CounterBar> {
                           ),
                         ),
                       ));
-                    } else
+                    } else {
                       count--;
+                    }
                   });
                 },
               ),
@@ -188,7 +190,9 @@ class _CounterState extends State<CounterBar> {
                   );
                 },
               ),
-            ])),
+            ],
+          ),
+        ),
       ],
     );
   }
