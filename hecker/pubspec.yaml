@@ -46,6 +46,7 @@ dependencies:
   pinput: ^2.2.16
   json_serializable: ^6.5.0
   build_runner: ^2.2.1
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:

@@ -13,7 +13,8 @@ ShopDetail _$ShopDetailFromJson(Map<String, dynamic> json) => ShopDetail()
   ..contactNumber = json['contactNumber'] as String?
   ..contactMail = json['contactMail'] as String?
   ..categoryCode = json['categoryCode'] as String?
-  ..gstn = json['gstn'] as String?;
+  ..gstn = json['gstn'] as String?
+  ..id = json['id'] as String?;
 
 Map<String, dynamic> _$ShopDetailToJson(ShopDetail instance) =>
     <String, dynamic>{
@@ -24,4 +25,5 @@ Map<String, dynamic> _$ShopDetailToJson(ShopDetail instance) =>
       'contactMail': instance.contactMail,
       'categoryCode': instance.categoryCode,
       'gstn': instance.gstn,
+      'id' : instance.id
     };
