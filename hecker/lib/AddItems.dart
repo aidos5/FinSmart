@@ -18,7 +18,7 @@ class _AddItemsState extends State<AddItems> {
   final quantity = TextEditingController();
   final minimumQuantity = TextEditingController();
   final unit = TextEditingController();
-  final sellingPrice = TextEditingController();
+  final rate = TextEditingController();
   final taxes = TextEditingController();
   final expDate = TextEditingController();
 
@@ -91,7 +91,7 @@ class _AddItemsState extends State<AddItems> {
                 child: TextFormField(
                   decoration: const InputDecoration(
                       labelText: 'Selling Price', border: OutlineInputBorder()),
-                  controller: sellingPrice,
+                  controller: rate,
                 ),
               ),
               Padding(
@@ -130,10 +130,11 @@ class _AddItemsState extends State<AddItems> {
       quantity: int.parse(quantity.text),
       minimumQuantity: int.parse(minimumQuantity.text),
       unit: unit.text,
-      sellingPrice: int.parse(sellingPrice.text),
+      rate: int.parse(rate.text),
       taxes: int.parse(taxes.text),
       expDate: DateTime.now(),
-      itemPrice: (int.parse(sellingPrice.text) - int.parse(taxes.text)),
+      itemPrice: (int.parse(rate.text) - int.parse(taxes.text)),
+      total: int.parse(rate.text) * int.parse(quantity.text),
     );
 
     final doc = item.toJson();
