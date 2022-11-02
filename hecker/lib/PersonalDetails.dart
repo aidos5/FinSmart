@@ -180,7 +180,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
 
                             // Set basic details
                             userCred!.name = nameController.text;
-                            userCred!.gender = selectedGender;
+                            userCred!.gender = selectedGender!;
                             userCred!.dob =
                                 '${dob!.day}/${dob!.month}/${dob!.year}';
                             userCred!.regDate = DateTime.now().toString();

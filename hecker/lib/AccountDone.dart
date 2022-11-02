@@ -44,10 +44,26 @@ class _AccountDoneState extends State<AccountDone> {
     userCred = await UserCredential.fromJson(localStorageUser.getItem('user'));
     shopDetail = await ShopDetail.fromJson(localStorageShop.getItem('shop'));
 
-    var shopID = await GetShopID();
+    String? shopID = "";
+
+    while (shopID!.isEmpty) {
+      shopID = await GetShopID();
+
+      if (shopID == null) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Error"),
+                content: Text("Something seems to be wrong..."),
+                actions: [TextButton(onPressed: () {}, child: Text("Retry"))],
+              );
+            });
+      }
+    }
 
     shopDetail!.id = shopID;
-    userCred!.shopID = shopID;
+    userCred!.shopID = shopID ?? "";
 
     await localStorageShop.setItem('shop', shopDetail);
     await localStorageUser.setItem('user', userCred);
@@ -70,7 +86,13 @@ class _AccountDoneState extends State<AccountDone> {
           .collection("people")
           .doc("ownerDetails");
 
+      var userCredDoc = db.collection("userCreds").doc("${userCred!.phoneNo}");
+      var shopDetailDoc =
+          userCredDoc.collection("shopDetail").doc("shopDetail");
+
       await ownerDoc.set(userCred!.toJson());
+      await userCredDoc.set(userCred!.toJson());
+      await shopDetailDoc.set(shopDetail!.toJson());
     } else {
       var workerDoc = db
           .collection("transactions")
@@ -80,7 +102,13 @@ class _AccountDoneState extends State<AccountDone> {
           .collection("people")
           .doc("worker_${userCred!.phoneNo}");
 
+      var userCredDoc = db.collection("userCreds").doc("${userCred!.phoneNo}");
+      var shopDetailDoc =
+          userCredDoc.collection("shopDetail").doc("shopDetail");
+
       await workerDoc.set(userCred!.toJson());
+      await userCredDoc.set(userCred!.toJson());
+      await shopDetailDoc.set(shopDetail!.toJson());
     }
 
     setState(() {

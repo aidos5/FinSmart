@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/MainPage.dart';
+import 'package:hecker/UI/LoginPIN.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:passwordfield/passwordfield.dart';
+import 'Model/UserCredential.dart';
 import 'Number.dart';
 import 'UI/LoginPage.dart';
 import 'UI/Passcode.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
 void main() {
@@ -18,28 +20,69 @@ void main() {
   // Ideal time to initialize
   // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final localStorage = new LocalStorage('userCred.json');
+
+  UserCredential? userCred;
+  bool isInit = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    GetUserCred();
+  }
+
+  void GetUserCred() async {
+    var uC = await localStorage.getItem('user');
+    if (uC == null) {
+      await localStorage.setItem('user', new UserCredential());
+    }
+
+    userCred =
+        await UserCredential.fromJson(await localStorage.getItem('user'));
+
+    print(userCred?.toJson());
+    setState(() {
+      isInit = true;
+    });
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-          appBarTheme: AppBarTheme(
-            color: HexColor('#4cbfa6'),
-            centerTitle: true,
-            titleTextStyle: GoogleFonts.poppins(
-              textStyle: TextStyle(fontSize: 37),
+        title: 'Flutter Demo',
+        theme: ThemeData(
+            appBarTheme: AppBarTheme(
+              color: HexColor('#4cbfa6'),
+              centerTitle: true,
+              titleTextStyle: GoogleFonts.poppins(
+                textStyle: TextStyle(fontSize: 37),
+              ),
             ),
-          ),
-          scaffoldBackgroundColor: HexColor('#f6ebf4'),
-          textTheme: GoogleFonts.poppinsTextTheme()),
-      home: LoginPage(),
-    );
+            scaffoldBackgroundColor: HexColor('#f6ebf4'),
+            textTheme: GoogleFonts.poppinsTextTheme()),
+        home: isInit
+            ? showLoginPage()
+            : Container(
+                child: Text("Loading..."),
+              ));
+  }
+
+  showLoginPage() {
+    if (userCred!.passHash.isEmpty) {
+      return LoginPage();
+    } else {
+      return LoginPIN();
+    }
   }
 }

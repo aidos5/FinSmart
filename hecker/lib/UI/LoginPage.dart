@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/MainPage.dart';
+import 'package:hecker/UI/LoginOTP.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:passwordfield/passwordfield.dart';
 import 'package:hecker/Number.dart';
@@ -51,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                 width: screenwidth / 1.5,
                 child: TextField(
                   showCursor: true,
+                  keyboardType: TextInputType.number,
                   controller: NameController,
                   decoration: InputDecoration(
                     labelText: 'Enter Mobile Number',
@@ -70,50 +72,50 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: screenheight / 20,
               ),
-              Text(
-                'Enter Password',
-                style: GoogleFonts.poppins(
-                  textStyle: TextStyle(fontSize: 37),
-                ),
-              ),
-              SizedBox(
-                width: screenwidth / 1.5,
-                child: PasswordField(
-                  controller: PasswordController,
-                  backgroundColor: HexColor('#f6ebf4').withOpacity(0.5),
-                  errorMessage: 'Enter Password Please',
-                  passwordConstraint: '[]{0}',
-                  hintText: 'Enter Password',
-                  inputDecoration: PasswordDecoration(
-                      inputPadding: const EdgeInsets.symmetric(horizontal: 20),
-                      hintStyle: GoogleFonts.poppins(
-                        textStyle: TextStyle(fontSize: 17),
-                      )),
-                  border: PasswordBorder(
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            width: screenwidth / 15,
-                            color: HexColor('#482673')),
-                        borderRadius: BorderRadius.circular(17)),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 3.5, color: HexColor('#482673')),
-                      borderRadius: BorderRadius.circular(17),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(width: 3.5, color: HexColor('#482673')),
-                      borderRadius: BorderRadius.circular(17),
-                    ),
-                  ),
-                ),
-              ),
+              // Text(
+              //   'Enter Password',
+              //   style: GoogleFonts.poppins(
+              //     textStyle: TextStyle(fontSize: 37),
+              //   ),
+              // ),
+              // SizedBox(
+              //   width: screenwidth / 1.5,
+              //   child: PasswordField(
+              //     controller: PasswordController,
+              //     backgroundColor: HexColor('#f6ebf4').withOpacity(0.5),
+              //     errorMessage: 'Enter Password Please',
+              //     passwordConstraint: '[]{0}',
+              //     hintText: 'Enter Password',
+              //     inputDecoration: PasswordDecoration(
+              //         inputPadding: const EdgeInsets.symmetric(horizontal: 20),
+              //         hintStyle: GoogleFonts.poppins(
+              //           textStyle: TextStyle(fontSize: 17),
+              //         )),
+              //     border: PasswordBorder(
+              //       border: OutlineInputBorder(
+              //           borderSide: BorderSide(
+              //               width: screenwidth / 15,
+              //               color: HexColor('#482673')),
+              //           borderRadius: BorderRadius.circular(17)),
+              //       focusedBorder: OutlineInputBorder(
+              //         borderSide:
+              //             BorderSide(width: 3.5, color: HexColor('#482673')),
+              //         borderRadius: BorderRadius.circular(17),
+              //       ),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderSide:
+              //             BorderSide(width: 3.5, color: HexColor('#482673')),
+              //         borderRadius: BorderRadius.circular(17),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: MaterialButton(
                   onPressed: (() {
                     Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => MainPage()),
+                        MaterialPageRoute(builder: (context) => LoginOTP.withPh(phoneNo: NameController.text,)),
                         (route) => false);
                   }),
                   color: HexColor('#ed0b70'),
