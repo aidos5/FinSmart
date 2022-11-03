@@ -125,6 +125,7 @@ class _MainPageState extends State<MainPage> {
     return DefaultTabController(
       length: maxBillCount,
       child: Scaffold(
+          drawer: Drawer(),
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
             centerTitle: true,
