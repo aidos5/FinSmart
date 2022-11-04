@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hecker/Navigation.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'Model/Bill.dart';
@@ -125,7 +126,7 @@ class _MainPageState extends State<MainPage> {
     return DefaultTabController(
       length: maxBillCount,
       child: Scaffold(
-          drawer: Drawer(),
+          drawer: Navigation(),
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
             centerTitle: true,
