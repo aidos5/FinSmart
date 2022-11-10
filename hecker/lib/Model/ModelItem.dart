@@ -4,6 +4,7 @@ class ModelItem {
   String name;
   String description;
   int quantity;
+  String id;
 
   String unit;
   int rate;
@@ -13,6 +14,7 @@ class ModelItem {
   int total;
 
   ModelItem({
+    required this.id,
     required this.name,
     required this.description,
     required this.quantity,
@@ -25,6 +27,7 @@ class ModelItem {
   });
 
   Map<String, dynamic> toJson() => {
+        'id':id,
         'name': name,
         'description': description,
         'quantity': quantity,
@@ -37,6 +40,7 @@ class ModelItem {
       };
 
   static ModelItem fromJson(Map<String, dynamic> json) => ModelItem(
+        id: json['id'],
         name: json['name'],
         description: json['description'],
         quantity: json['quantity'],

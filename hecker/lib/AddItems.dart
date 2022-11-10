@@ -176,7 +176,39 @@ class _AddItemsState extends State<AddItems> {
   }
 
   Future SaveAll() async {
+    final docuser;
+    String? id = scanResult;
+
+    String? serialNumber = "";
+    while (serialNumber!.isEmpty) {
+      serialNumber = await GetSerialNumber();
+    }
+
+    if(id == null)
+    {
+      id = serialNumber;
+    }
+    
+    if (scanResult != null) {
+      docuser = FirebaseFirestore.instance
+          .collection('transactions')
+          .doc('category')
+          .collection('pincode')
+          .doc('shopid')
+          .collection('items')
+          .doc('${scanResult}');
+    } else {
+      docuser = FirebaseFirestore.instance
+          .collection('transactions')
+          .doc('category')
+          .collection('pincode')
+          .doc('shopid')
+          .collection('items')
+          .doc('$serialNumber');
+    }
+
     final item = ModelItem(
+      id: id,
       name: itemName.text,
       description: itemDescription.text,
       quantity: int.parse(quantity.text),
@@ -189,28 +221,6 @@ class _AddItemsState extends State<AddItems> {
     );
 
     final doc = item.toJson();
-    final docuser;
-    if (scanResult != null) {
-      docuser = FirebaseFirestore.instance
-          .collection('transactions')
-          .doc('category')
-          .collection('pincode')
-          .doc('shopid')
-          .collection('items')
-          .doc('${scanResult}');
-    } else {
-      String? serialNumber = "";
-      while (serialNumber!.isEmpty) {
-        serialNumber = await GetSerialNumber();
-      }
-      docuser = FirebaseFirestore.instance
-          .collection('transactions')
-          .doc('category')
-          .collection('pincode')
-          .doc('shopid')
-          .collection('items')
-          .doc('$serialNumber');
-    }
 
     await docuser.set(doc);
   }
