@@ -1,5 +1,7 @@
 import 'package:dbcrypt/dbcrypt.dart';
 import 'package:flutter/material.dart';
+import 'package:hecker/AddItems.dart';
+import 'package:hecker/Items.dart';
 import 'package:hecker/MainPage.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:pinput/pinput.dart';
@@ -92,9 +94,11 @@ class _LoginPINState extends State<LoginPIN> {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: Text("Error"),
-                                  content: Text("Seems like pin you entered is wrong!"),
+                                  content: Text(
+                                      "Seems like pin you entered is wrong!"),
                                   actions: [
-                                    TextButton(onPressed: () {}, child: Text("OK"))
+                                    TextButton(
+                                        onPressed: () {}, child: Text("OK"))
                                   ],
                                 );
                               });

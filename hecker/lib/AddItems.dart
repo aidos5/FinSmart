@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/Items.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'Model/ModelItem.dart';
+
+import 'package:http/http.dart' as http;
 
 class AddItems extends StatefulWidget {
   AddItems({Key? key}) : super(key: key);
@@ -16,12 +21,23 @@ class AddItems extends StatefulWidget {
 
 class _AddItemsState extends State<AddItems> {
   final itemName = TextEditingController();
+  final itemDescription = TextEditingController();
   final quantity = TextEditingController();
-  final minimumQuantity = TextEditingController();
   final unit = TextEditingController();
   final rate = TextEditingController();
   final taxes = TextEditingController();
   final expDate = TextEditingController();
+
+  String? scanResult;
+
+  Future<String?> GetSerialNumber() async {
+    var response =
+        await http.get(Uri.parse("https://productid.finsmart.workers.dev"));
+
+    SerialNumber id = SerialNumber.fromJson(jsonDecode(response.body));
+
+    return id.id ?? null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +48,15 @@ class _AddItemsState extends State<AddItems> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.qr_code_scanner,
+              color: Colors.white,
+            ),
+            onPressed: scanBarcode,
+          )
+        ],
         leading: MaterialButton(
           onPressed: (() {
             Navigator.of(context).pushAndRemoveUntil(
@@ -54,6 +79,13 @@ class _AddItemsState extends State<AddItems> {
           width: screenwidth,
           child: Column(
             children: [
+              Text(
+                scanResult == null
+                    ? 'No Serial Number'
+                    : 'Serial Number : $scanResult',
+                style: TextStyle(fontSize: 25),
+                textAlign: TextAlign.center,
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -66,29 +98,27 @@ class _AddItemsState extends State<AddItems> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: const InputDecoration(
-                      labelText: 'Quantity', border: OutlineInputBorder()),
-                  controller: quantity,
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'Minimum Quantity',
+                      labelText: 'Item Description',
                       border: OutlineInputBorder()),
-                  controller: minimumQuantity,
-                  keyboardType: TextInputType.number,
+                  controller: itemDescription,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'Enter unit', border: OutlineInputBorder()),
-                  controller: unit,
-                ),
-              ),
+//               Padding(
+//                 padding: const EdgeInsets.all(8.0),
+//                 child: TextFormField(
+//                   decoration: const InputDecoration(
+// <<<<<<< HEAD
+//                       labelText: 'Minimum Quantity',
+//                       border: OutlineInputBorder()),
+//                   controller: minimumQuantity,
+//                   keyboardType: TextInputType.number,
+// =======
+//                 padding: const EdgeInsets.all(8.0),
+//                 child: TextFormField(
+//                       labelText: 'Enter unit', border: OutlineInputBorder()),
+//                   controller: unit,
+//                 ),
+//               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -130,11 +160,26 @@ class _AddItemsState extends State<AddItems> {
     );
   }
 
-  void SaveAll() async {
+  Future scanBarcode() async {
+    String scanResult;
+    try {
+      scanResult = await FlutterBarcodeScanner.scanBarcode(
+          "#FF0000", "close", true, ScanMode.BARCODE);
+    } on PlatformException {
+      scanResult = "Failed to get platfor exception";
+    }
+
+    if (!mounted) return;
+    setState(() {
+      this.scanResult = scanResult;
+    });
+  }
+
+  Future SaveAll() async {
     final item = ModelItem(
       name: itemName.text,
+      description: itemDescription.text,
       quantity: int.parse(quantity.text),
-      minimumQuantity: int.parse(minimumQuantity.text),
       unit: unit.text,
       rate: int.parse(rate.text),
       taxes: int.parse(taxes.text),
@@ -144,13 +189,28 @@ class _AddItemsState extends State<AddItems> {
     );
 
     final doc = item.toJson();
-    final docuser = FirebaseFirestore.instance
-        .collection('transactions')
-        .doc('category')
-        .collection('pincode')
-        .doc('shopid')
-        .collection('items')
-        .doc('${itemName.text + '_' + unit.text}');
+    final docuser;
+    if (scanResult != null) {
+      docuser = FirebaseFirestore.instance
+          .collection('transactions')
+          .doc('category')
+          .collection('pincode')
+          .doc('shopid')
+          .collection('items')
+          .doc('${scanResult}');
+    } else {
+      String? serialNumber = "";
+      while (serialNumber!.isEmpty) {
+        serialNumber = await GetSerialNumber();
+      }
+      docuser = FirebaseFirestore.instance
+          .collection('transactions')
+          .doc('category')
+          .collection('pincode')
+          .doc('shopid')
+          .collection('items')
+          .doc('$serialNumber');
+    }
 
     await docuser.set(doc);
   }

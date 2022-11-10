@@ -58,7 +58,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int maxBillCount = 5;
-
+  bool firstopen = false;
   Stream<List<ModelItem>> dataItems = readItem();
 
   List<TextEditingController> quantityEditor = [];
@@ -165,6 +165,7 @@ class _MainPageState extends State<MainPage> {
     final screenwidth = MediaQuery.of(context).size.width;
 
     billtabs = [];
+    print(foundItems.length);
     for (int i = 1; i <= maxBillCount; i++) {
       billtabs.add(
         Tab(
@@ -458,7 +459,7 @@ class _MainPageState extends State<MainPage> {
 
   void searchItems(String query) {
     List<ModelItem> results = [];
-    if (query.isEmpty) {
+    if (query.isEmpty && query != null) {
       results.addAll(allItems);
     } else {
       results = allItems.where((item) {
