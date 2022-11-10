@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hecker/AddItems.dart';
+import 'package:hecker/MainPage.dart';
 import 'package:hecker/Model/ModelItem.dart';
 
 class Items extends StatefulWidget {
@@ -41,6 +42,17 @@ class _ItemsState extends State<Items> {
         title: const Text(
           'FinSmart',
           style: TextStyle(fontSize: 37),
+        ),
+        leading: MaterialButton(
+          onPressed: (() {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => MainPage()),
+                (route) => false);
+          }),
+          child: Icon(
+            Icons.arrow_back_sharp,
+            color: Colors.white,
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

@@ -100,10 +100,12 @@ class _MainPageState extends State<MainPage> {
         for (ModelItem i in listofitems) {
           allItems.add(i);
         }
+        
+        setState(() {
+          foundItems = List.from(allItems);
+        });
       },
     );
-
-    foundItems = List.from(allItems);
   }
 
   void getDate() async {
@@ -166,13 +168,11 @@ class _MainPageState extends State<MainPage> {
     for (int i = 1; i <= maxBillCount; i++) {
       billtabs.add(
         Tab(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SingleChildScrollView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                child: SizedBox(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
                   width: screenwidth,
                   child: StreamBuilder<List<ModelItem>>(
                     stream: dataItems,
@@ -199,6 +199,7 @@ class _MainPageState extends State<MainPage> {
                               shrinkWrap: true,
                               itemCount: foundItems.length,
                               itemBuilder: (context, index) => cardmaker(index),
+                              physics: AlwaysScrollableScrollPhysics(),
                             ),
                             MaterialButton(
                               onPressed: (() {
@@ -217,8 +218,8 @@ class _MainPageState extends State<MainPage> {
                     },
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );

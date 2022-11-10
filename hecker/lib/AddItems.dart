@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/Items.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -67,6 +68,7 @@ class _AddItemsState extends State<AddItems> {
                   decoration: const InputDecoration(
                       labelText: 'Quantity', border: OutlineInputBorder()),
                   controller: quantity,
+                  keyboardType: TextInputType.number,
                 ),
               ),
               Padding(
@@ -76,6 +78,7 @@ class _AddItemsState extends State<AddItems> {
                       labelText: 'Minimum Quantity',
                       border: OutlineInputBorder()),
                   controller: minimumQuantity,
+                  keyboardType: TextInputType.number,
                 ),
               ),
               Padding(
@@ -92,6 +95,7 @@ class _AddItemsState extends State<AddItems> {
                   decoration: const InputDecoration(
                       labelText: 'Selling Price', border: OutlineInputBorder()),
                   controller: rate,
+                  keyboardType: TextInputType.number,
                 ),
               ),
               Padding(
@@ -100,6 +104,7 @@ class _AddItemsState extends State<AddItems> {
                   decoration: const InputDecoration(
                       labelText: 'Taxes', border: OutlineInputBorder()),
                   controller: taxes,
+                  keyboardType: TextInputType.number,
                 ),
               ),
               Padding(
@@ -108,6 +113,7 @@ class _AddItemsState extends State<AddItems> {
                   decoration: const InputDecoration(
                       labelText: 'Expiry Date', border: OutlineInputBorder()),
                   controller: expDate,
+                  keyboardType: TextInputType.datetime,
                 ),
               ),
               MaterialButton(
@@ -124,7 +130,7 @@ class _AddItemsState extends State<AddItems> {
     );
   }
 
-  Future SaveAll() async {
+  void SaveAll() async {
     final item = ModelItem(
       name: itemName.text,
       quantity: int.parse(quantity.text),
