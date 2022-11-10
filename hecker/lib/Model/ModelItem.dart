@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ModelItem {
   String name;
+  String description;
   int quantity;
-  int minimumQuantity;
+
   String unit;
   int rate;
   int taxes;
@@ -13,8 +14,8 @@ class ModelItem {
 
   ModelItem({
     required this.name,
+    required this.description,
     required this.quantity,
-    required this.minimumQuantity,
     this.unit = '',
     required this.rate,
     this.taxes = 0,
@@ -25,20 +26,20 @@ class ModelItem {
 
   Map<String, dynamic> toJson() => {
         'name': name,
+        'description': description,
         'quantity': quantity,
-        'minimumQuantity': minimumQuantity,
         'unit': unit,
         'rate': rate,
         'taxes': taxes,
         'expDate': expDate,
         'itemPrice': (rate - taxes),
-        'total': quantity*rate
+        'total': quantity * rate
       };
 
   static ModelItem fromJson(Map<String, dynamic> json) => ModelItem(
         name: json['name'],
+        description: json['description'],
         quantity: json['quantity'],
-        minimumQuantity: json['minimumQuantity'],
         unit: json['unit'],
         rate: json['rate'],
         taxes: json['taxes'],
@@ -46,4 +47,13 @@ class ModelItem {
         itemPrice: json['itemPrice'],
         total: json['total'],
       );
+}
+
+class SerialNumber {
+  String? id;
+
+  SerialNumber({this.id});
+
+  factory SerialNumber.fromJson(Map<String, dynamic> json) =>
+      SerialNumber(id: json['id']);
 }
