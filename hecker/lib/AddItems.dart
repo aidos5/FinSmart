@@ -180,12 +180,12 @@ class _AddItemsState extends State<AddItems> {
     String? id = scanResult;
 
     String? serialNumber = "";
-    while (serialNumber!.isEmpty) {
-      serialNumber = await GetSerialNumber();
-    }
-
     if(id == null)
     {
+      while (serialNumber!.isEmpty) {
+        serialNumber = await GetSerialNumber();
+      }
+
       id = serialNumber;
     }
     
