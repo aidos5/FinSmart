@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/Navigation.dart';
+import 'package:hecker/Payments.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'Model/Bill.dart';
@@ -16,38 +17,6 @@ import 'package:base_x/base_x.dart';
 import 'Model/ShopDetail.dart';
 import 'Model/lastBillDate.dart';
 import 'package:intl/intl.dart';
-//import 'package:sample/Model/ModelItem.dart';
-
-Future main() async {
-  // Ideal time to initialize
-  // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-          appBarTheme: AppBarTheme(
-            color: HexColor('#4cbfa6'),
-            centerTitle: true,
-            titleTextStyle: GoogleFonts.poppins(
-              textStyle: TextStyle(fontSize: 37),
-            ),
-          ),
-          scaffoldBackgroundColor: HexColor('#f6ebf4'),
-          textTheme: GoogleFonts.poppinsTextTheme()),
-      home: const MainPage(),
-    );
-  }
-}
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -58,13 +27,14 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int maxBillCount = 5;
-  bool firstopen = false;
+  bool firstopen = true;
   Stream<List<ModelItem>> dataItems = readItem();
 
   List<TextEditingController> quantityEditor = [];
 
-  final localStorage = LocalStorage('lastBillDate.json');
+  final localStoragebillDate = LocalStorage('lastBillDate.json');
   var storage = LocalStorage('shopDetail.json');
+  var localStorageItems = LocalStorage('items.json');
 
   List<int> count = [];
 
@@ -106,15 +76,22 @@ class _MainPageState extends State<MainPage> {
         });
       },
     );
+<<<<<<< Updated upstream
+=======
+
+    
+
+    foundItems = List.from(allItems);
+>>>>>>> Stashed changes
   }
 
   void getDate() async {
-    var l = await localStorage.getItem('lastBillDate');
+    var l = await localStoragebillDate.getItem('lastBillDate');
     if (l == null) {
-      await localStorage.setItem('lastBillDate', new lastBillDate());
+      await localStoragebillDate.setItem('lastBillDate', new lastBillDate());
     }
 
-    lBD = await lastBillDate.fromJson(localStorage.getItem('lastBillDate'));
+    lBD = await lastBillDate.fromJson(localStoragebillDate.getItem('lastBillDate'));
     print(lBD!.lastBill);
     print(lBD!.toJson());
 
@@ -128,6 +105,20 @@ class _MainPageState extends State<MainPage> {
     return DefaultTabController(
       length: maxBillCount,
       child: Scaffold(
+          floatingActionButton: count.length != 0
+              ? SizedBox(
+                  width: 100,
+                  child: FloatingActionButton(
+                    shape: BeveledRectangleBorder(),
+                    onPressed: (() {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => Payments()),
+                          (route) => false);
+                    }),
+                    child: Text('Checkout'),
+                  ),
+                )
+              : null,
           drawer: Navigation(),
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
@@ -169,6 +160,7 @@ class _MainPageState extends State<MainPage> {
     for (int i = 1; i <= maxBillCount; i++) {
       billtabs.add(
         Tab(
+<<<<<<< Updated upstream
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -182,42 +174,51 @@ class _MainPageState extends State<MainPage> {
                         return Text('There is an error ${snapshot.error}');
                       } else if (snapshot.hasData) {
                         return Column(
+=======
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.search),
+                  hintText: 'Search Item',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.blueAccent),
+                  ),
+                ),
+                onChanged: searchItems,
+              ),
+              SizedBox(
+                width: screenwidth,
+                child: StreamBuilder<List<ModelItem>>(
+                  stream: dataItems,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('There is an error ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      return Expanded(
+                        child: Column(
+>>>>>>> Stashed changes
                           children: [
-                            TextField(
-                              controller: controller,
-                              decoration: InputDecoration(
-                                prefixIcon: const Icon(Icons.search),
-                                hintText: 'Search Item',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  borderSide:
-                                      BorderSide(color: Colors.blueAccent),
-                                ),
-                              ),
-                              onChanged: searchItems,
-                            ),
                             ListView.builder(
                               shrinkWrap: true,
-                              itemCount: foundItems.length,
+                              itemCount: firstopen == true
+                                  ? allItems.length
+                                  : foundItems.length,
                               itemBuilder: (context, index) => cardmaker(index),
                               physics: AlwaysScrollableScrollPhysics(),
                             ),
-                            MaterialButton(
-                              onPressed: (() {
-                                generateBill();
-                              }),
-                              child: Text('Checkout'),
-                              color: Colors.amber,
-                            )
                           ],
-                        );
-                      } else {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    },
-                  ),
+                        ),
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
                 ),
               ],
             ),
@@ -229,49 +230,99 @@ class _MainPageState extends State<MainPage> {
   }
 
   Card cardmaker(int index) {
-    return Card(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                'Name : ',
-                style: TextStyle(fontSize: 20),
-              ),
-              Text(
-                '${foundItems[index].name}',
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(
-                width: 25,
-              ),
-              Text(
-                'Quantity left: ',
-                style: TextStyle(fontSize: 20),
-              ),
-              Text(
-                '${foundItems[index].quantity} ',
-                style: TextStyle(fontSize: 20),
-              ),
-              Text('${foundItems[index].unit}', style: TextStyle(fontSize: 20)),
-            ],
-          ),
-          Row(
-            children: [
-              Text(
-                'Selling Price : ',
-                style: TextStyle(fontSize: 20),
-              ),
-              Text(
-                '${foundItems[index].rate}',
-                style: TextStyle(fontSize: 20),
-              ),
-            ],
-          ),
-          quantityField(index),
-        ],
-      ),
-    );
+    return firstopen == false
+        ? Card(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Name : ',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      '${foundItems[index].name}',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(
+                      width: 25,
+                    ),
+                    Text(
+                      'Quantity left: ',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      '${foundItems[index].quantity} ',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      '${foundItems[index].unit}',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Selling Price : ',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      '${foundItems[index].rate}',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                quantityField(index),
+              ],
+            ),
+          )
+        : Card(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Name : ',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      '${allItems[index].name}',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(
+                      width: 25,
+                    ),
+                    Text(
+                      'Quantity left: ',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      '${allItems[index].quantity} ',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      '${allItems[index].unit}',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Selling Price : ',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      '${allItems[index].rate}',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                quantityField(index),
+              ],
+            ),
+          );
   }
 
   Widget quantityField(int index) {
@@ -383,14 +434,14 @@ class _MainPageState extends State<MainPage> {
       lBD!.lastBill = lBD!.lastBill!.replaceAll(new RegExp(r'[^\w\s]+'), '');
       lBD!.iterator = '000001';
 
-      await localStorage.setItem('lastBillDate', lBD);
+      await localStoragebillDate.setItem('lastBillDate', lBD);
 
-      print(await localStorage.getItem('lastBillDate'));
+      print(await localStoragebillDate.getItem('lastBillDate'));
     } else if (lBD!.lastBill != DateFormat.yMd().format(DateTime.now())) {
       lBD!.lastBill = DateFormat.yMd().format(DateTime.now());
       lBD!.lastBill != lBD!.lastBill!.replaceAll(new RegExp(r'[^\w\s]+'), '');
 
-      await localStorage.setItem('lastBillDate', lBD);
+      await localStoragebillDate.setItem('lastBillDate', lBD);
     } else {
       temp = int.parse(lBD!.iterator as String);
       temp++;
@@ -401,9 +452,9 @@ class _MainPageState extends State<MainPage> {
 
       tempIter = tempIter + temp.toString();
       lBD!.iterator = tempIter;
-      await localStorage.setItem('lastBillDate', lBD);
+      await localStoragebillDate.setItem('lastBillDate', lBD);
 
-      print(await localStorage.getItem('lastBillDate'));
+      print(await localStoragebillDate.getItem('lastBillDate'));
     }
 
     var billN = ('$shopID${lBD!.lastBill}${lBD!.iterator}');
@@ -458,6 +509,9 @@ class _MainPageState extends State<MainPage> {
   }
 
   void searchItems(String query) {
+    setState(() {
+      firstopen = false;
+    });
     List<ModelItem> results = [];
     if (query.isEmpty && query != null) {
       results.addAll(allItems);
