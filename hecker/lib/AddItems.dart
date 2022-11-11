@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/Items.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:localstorage/localstorage.dart';
 import 'Model/ModelItem.dart';
 
 import 'package:http/http.dart' as http;
@@ -29,6 +30,8 @@ class _AddItemsState extends State<AddItems> {
   final expDate = TextEditingController();
 
   String? scanResult;
+
+  var localStorageItems = new LocalStorage('items.json');
 
   Future<String?> GetSerialNumber() async {
     var response =
@@ -90,7 +93,9 @@ class _AddItemsState extends State<AddItems> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: const InputDecoration(
-                      labelText: 'Item Name', border: OutlineInputBorder()),
+                    labelText: 'Item Name',
+                    border: OutlineInputBorder(),
+                  ),
                   controller: itemName,
                 ),
               ),
@@ -176,6 +181,7 @@ class _AddItemsState extends State<AddItems> {
   }
 
   Future SaveAll() async {
+<<<<<<< Updated upstream
     final docuser;
     String? id = scanResult;
 
@@ -189,6 +195,22 @@ class _AddItemsState extends State<AddItems> {
       id = serialNumber;
     }
     
+=======
+    final item = ModelItem(
+      name: itemName.text,
+      description: itemDescription.text,
+      quantity: int.parse(quantity.text),
+      unit: unit.text,
+      rate: int.parse(rate.text),
+      taxes: int.parse(taxes.text),
+      expDate: DateTime.now(),
+      itemPrice: (int.parse(rate.text) - int.parse(taxes.text)),
+      total: int.parse(rate.text) * int.parse(quantity.text),
+    );
+
+    final doc = item.toJson();
+    final DocumentReference<Map<String, dynamic>> docuser;
+>>>>>>> Stashed changes
     if (scanResult != null) {
       docuser = FirebaseFirestore.instance
           .collection('transactions')
@@ -196,7 +218,9 @@ class _AddItemsState extends State<AddItems> {
           .collection('pincode')
           .doc('shopid')
           .collection('items')
-          .doc('${scanResult}');
+          .doc('$scanResult');
+
+          await localStorageItems.setItem('$scanResult', List<ModelItem>);
     } else {
       docuser = FirebaseFirestore.instance
           .collection('transactions')
@@ -204,8 +228,10 @@ class _AddItemsState extends State<AddItems> {
           .collection('pincode')
           .doc('shopid')
           .collection('items')
-          .doc('$serialNumber');
+          .doc(serialNumber);
+          await localStorageItems.setItem(serialNumber, List<ModelItem>);
     }
+<<<<<<< Updated upstream
 
     final item = ModelItem(
       id: id,
@@ -222,6 +248,9 @@ class _AddItemsState extends State<AddItems> {
 
     final doc = item.toJson();
 
+=======
+    
+>>>>>>> Stashed changes
     await docuser.set(doc);
   }
 }

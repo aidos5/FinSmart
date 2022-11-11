@@ -17,6 +17,8 @@ class _ItemsState extends State<Items> {
   List<ModelItem> allItems = [];
   List<ModelItem> foundItems = [];
 
+  bool firstopen = true;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -89,55 +91,111 @@ class _ItemsState extends State<Items> {
                     ),
                     ListView.builder(
                       shrinkWrap: true,
-                      itemCount: foundItems.length,
+                      itemCount: firstopen == true
+                          ? allItems.length
+                          : foundItems.length,
                       itemBuilder: (context, index) {
-                        return Card(
-                          child: Column(
-                            children: [
-                              // ignore: unnecessary_string_interpolations
-                              Row(
-                                children: [
-                                  Text(
-                                    'Name : ',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Text(
-                                    '${foundItems[index].name}',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  SizedBox(
-                                    width: 25,
-                                  ),
-                                  Text(
-                                    'Quantity left: ',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Text(
-                                    '${foundItems[index].quantity} ',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Text('${foundItems[index].unit}',
-                                      style: TextStyle(fontSize: 20)),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Selling Price : ',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Text('${foundItems[index].itemPrice}',
-                                      style: TextStyle(fontSize: 20)),
-                                ],
-                              ),
-                              MaterialButton(
-                                onPressed: (() {}),
-                                child: Text('Update'),
-                                color: Colors.green,
+                        return firstopen == false
+                            ? Card(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Name : ',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        Text(
+                                          '${foundItems[index].name}',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        SizedBox(
+                                          width: 25,
+                                        ),
+                                        Text(
+                                          'Quantity left: ',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        Text(
+                                          '${foundItems[index].quantity} ',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        Text(
+                                          '${foundItems[index].unit}',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Selling Price : ',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        Text(
+                                          '${foundItems[index].rate}',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                      ],
+                                    ),
+                                    MaterialButton(
+                                      onPressed: (() {}),
+                                      child: Text('Update'),
+                                      color: Colors.green,
+                                    )
+                                  ],
+                                ),
                               )
-                            ],
-                          ),
-                        );
+                            : Card(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Name : ',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        Text(
+                                          '${allItems[index].name}',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        SizedBox(
+                                          width: 25,
+                                        ),
+                                        Text(
+                                          'Quantity left: ',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        Text(
+                                          '${allItems[index].quantity} ',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        Text(
+                                          '${allItems[index].unit}',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Selling Price : ',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        Text(
+                                          '${allItems[index].rate}',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                      ],
+                                    ),
+                                    MaterialButton(
+                                      onPressed: (() {}),
+                                      child: Text('Update'),
+                                      color: Colors.green,
+                                    )
+                                  ],
+                                ),
+                              );
                       },
                     ),
                   ],
@@ -155,6 +213,9 @@ class _ItemsState extends State<Items> {
   }
 
   void searchItems(String query) {
+    setState(() {
+      firstopen = false;
+    });
     List<ModelItem> results = [];
     if (query.isEmpty) {
       results.addAll(allItems);
