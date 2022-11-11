@@ -76,13 +76,10 @@ class _MainPageState extends State<MainPage> {
         });
       },
     );
-<<<<<<< Updated upstream
-=======
 
     
 
     foundItems = List.from(allItems);
->>>>>>> Stashed changes
   }
 
   void getDate() async {
@@ -160,21 +157,6 @@ class _MainPageState extends State<MainPage> {
     for (int i = 1; i <= maxBillCount; i++) {
       billtabs.add(
         Tab(
-<<<<<<< Updated upstream
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: screenwidth,
-                  child: StreamBuilder<List<ModelItem>>(
-                    stream: dataItems,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text('There is an error ${snapshot.error}');
-                      } else if (snapshot.hasData) {
-                        return Column(
-=======
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -200,7 +182,6 @@ class _MainPageState extends State<MainPage> {
                     } else if (snapshot.hasData) {
                       return Expanded(
                         child: Column(
->>>>>>> Stashed changes
                           children: [
                             ListView.builder(
                               shrinkWrap: true,
@@ -220,8 +201,8 @@ class _MainPageState extends State<MainPage> {
                     }
                   },
                 ),
-              ],
-            ),
+              )
+            ],
           ),
         ),
       );
