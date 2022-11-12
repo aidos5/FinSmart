@@ -86,7 +86,7 @@ class _LoginPINState extends State<LoginPIN> {
 
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                  builder: (context) => MainPage()),
+                                  builder: (context) => AddItems()),
                               (route) => false);
                         } else {
                           showDialog(
@@ -98,7 +98,10 @@ class _LoginPINState extends State<LoginPIN> {
                                       "Seems like pin you entered is wrong!"),
                                   actions: [
                                     TextButton(
-                                        onPressed: () {}, child: Text("OK"))
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text("OK"))
                                   ],
                                 );
                               });

@@ -9,7 +9,7 @@ class ModelItem {
   String unit;
   int rate;
   int taxes;
-  DateTime expDate;
+  String expDate;
   int itemPrice;
   int total;
 
@@ -47,7 +47,7 @@ class ModelItem {
         unit: json['unit'],
         rate: json['rate'],
         taxes: json['taxes'],
-        expDate: (json['expDate'] as Timestamp).toDate(),
+        expDate: (json['expDate']),
         itemPrice: json['itemPrice'],
         total: json['total'],
       );

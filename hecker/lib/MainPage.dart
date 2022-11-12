@@ -18,6 +18,8 @@ import 'Model/ShopDetail.dart';
 import 'Model/lastBillDate.dart';
 import 'package:intl/intl.dart';
 
+import 'Model/storeItems.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -28,7 +30,10 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int maxBillCount = 5;
   bool firstopen = true;
-  Stream<List<ModelItem>> dataItems = readItem();
+  //Stream<List<ModelItem>> dataItems = readItem();
+
+  storeItems? storeditems;
+  List<Map<String, dynamic>>? aI;
 
   List<TextEditingController> quantityEditor = [];
 
@@ -65,17 +70,33 @@ class _MainPageState extends State<MainPage> {
   }
 
   void fillItems() async {
-    dataItems.listen(
-      (listofitems) {
-        for (ModelItem i in listofitems) {
-          allItems.add(i);
-        }
-        
-        setState(() {
-          foundItems = List.from(allItems);
-        });
-      },
-    );
+    // dataItems.listen(
+    //   (listofitems) {
+    //     for (ModelItem i in listofitems) {
+    //       allItems.add(i);
+    //     }
+
+    //     setState(() {
+    //       foundItems = List.from(allItems);
+    //     });
+    //   },
+    // );
+
+    //foundItems = List.from(allItems);
+
+    var temp = (localStorageItems.getItem('items'));
+    if (temp != null) {
+      storeditems = storeItems.fromJson(temp);
+      aI = storeditems!.allItem;
+
+      for (Map<String, dynamic> i in aI!) {
+      allItems.add(ModelItem.fromJson(i));
+    }
+
+    } else {
+      aI = [];
+      await localStorageItems.setItem('items', storeditems);
+    }
 
     
 
@@ -88,7 +109,8 @@ class _MainPageState extends State<MainPage> {
       await localStoragebillDate.setItem('lastBillDate', new lastBillDate());
     }
 
-    lBD = await lastBillDate.fromJson(localStoragebillDate.getItem('lastBillDate'));
+    lBD = await lastBillDate
+        .fromJson(localStoragebillDate.getItem('lastBillDate'));
     print(lBD!.lastBill);
     print(lBD!.toJson());
 
@@ -174,32 +196,19 @@ class _MainPageState extends State<MainPage> {
               ),
               SizedBox(
                 width: screenwidth,
-                child: StreamBuilder<List<ModelItem>>(
-                  stream: dataItems,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('There is an error ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      return Expanded(
-                        child: Column(
-                          children: [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: firstopen == true
-                                  ? allItems.length
-                                  : foundItems.length,
-                              itemBuilder: (context, index) => cardmaker(index),
-                              physics: AlwaysScrollableScrollPhysics(),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
+                child: Expanded(
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: firstopen == true
+                            ? allItems.length
+                            : foundItems.length,
+                        itemBuilder: (context, index) => cardmaker(index),
+                        physics: AlwaysScrollableScrollPhysics(),
+                      ),
+                    ],
+                  ),
                 ),
               )
             ],

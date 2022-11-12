@@ -15,7 +15,7 @@ UserCredential _$UserCredentialFromJson(Map<String, dynamic> json) =>
       ..gender = json['gender'] as String
       ..dob = json['dob'] as String
       ..regDate = json['regDate'] as String
-      ..isOwner = json['isOwner'] as bool
+      ..isOwner = json['isOwner'] as bool?
       ..passHash = json['passHash'] as String;
 
 Map<String, dynamic> _$UserCredentialToJson(UserCredential instance) =>

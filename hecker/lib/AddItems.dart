@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/Items.dart';
+import 'package:hecker/Model/storeItems.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:localstorage/localstorage.dart';
 import 'Model/ModelItem.dart';
@@ -31,8 +33,10 @@ class _AddItemsState extends State<AddItems> {
 
   String? scanResult;
 
-  var localStorageItems = new LocalStorage('items.json');
-  List<ModelItem> items = [];
+  var localStorageItems = LocalStorage('items.json');
+  storeItems? storeditems = storeItems();
+  ModelItem? addItem;
+  List<Map<String, dynamic>>? allItems;
 
   Future<String?> GetSerialNumber() async {
     var response =
@@ -44,12 +48,15 @@ class _AddItemsState extends State<AddItems> {
   }
 
   Future LoadItems() async {
-    var itemsListString = localStorageItems.getItem('items');
-    var itemsString = (jsonDecode(itemsListString) as List);
-
-    itemsString.forEach((element) {
-      items.add(ModelItem.fromJson(element));
-    });
+    var temp = (localStorageItems.getItem('items'));
+    if (temp != null) {
+      var tempI = storeItems.fromJson(temp);
+      allItems = List.from(storeditems!.allItem!.map((e) => e));
+      storeditems = await storeItems.fromJson(temp);
+    } else {
+      allItems = [];
+      await localStorageItems.setItem('items', storeditems);
+    }
   }
 
   @override
@@ -147,6 +154,15 @@ class _AddItemsState extends State<AddItems> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: const InputDecoration(
+                      labelText: 'Quantity', border: OutlineInputBorder()),
+                  controller: quantity,
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: const InputDecoration(
                       labelText: 'Taxes', border: OutlineInputBorder()),
                   controller: taxes,
                   keyboardType: TextInputType.number,
@@ -166,6 +182,13 @@ class _AddItemsState extends State<AddItems> {
                   SaveAll();
                 }),
                 child: Text('Save'),
+                color: Colors.red,
+              ),
+              MaterialButton(
+                onPressed: (() {
+                  localStorageItems.deleteItem('items');
+                }),
+                child: Text('Delete'),
                 color: Colors.red,
               )
             ],
@@ -206,19 +229,17 @@ class _AddItemsState extends State<AddItems> {
     }
 
     final item = ModelItem(
-      id: id,
+      id: scanResult == null ? id : scanResult!,
       name: itemName.text,
       description: itemDescription.text,
       quantity: int.parse(quantity.text),
       unit: unit.text,
       rate: int.parse(rate.text),
       taxes: int.parse(taxes.text),
-      expDate: DateTime.now(),
+      expDate: DateFormat.yMd().format(DateTime.now()),
       itemPrice: (int.parse(rate.text) - int.parse(taxes.text)),
       total: int.parse(rate.text) * int.parse(quantity.text),
     );
-
-    items.add(item);
 
     final doc = item.toJson();
     if (scanResult != null) {
@@ -239,13 +260,16 @@ class _AddItemsState extends State<AddItems> {
           .doc(serialNumber);
     }
 
+    allItems!.add(doc);
+
     await docuser.set(doc);
 
-    List itemList = [];
-    items.forEach((element) {
-      itemList.add(element.toJson());
-    });
+    // List itemList = [];
+    // items.forEach((element) {
+    //   itemList.add(element.toJson());
+    // });
+    // localStorageItems.setItem('items', jsonEncode(itemList));
 
-    localStorageItems.setItem('items', jsonEncode(itemList));
+    localStorageItems.setItem('items', allItems);
   }
 }
