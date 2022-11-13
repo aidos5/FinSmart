@@ -261,7 +261,7 @@ class _AddItemsState extends State<AddItems> {
       unit: unit.text,
       rate: int.parse(rate.text),
       taxes: int.parse(taxes.text),
-      expDate: DateFormat.yMd().format(DateTime.now()),
+      expDate: DateFormat.yMd().format(newDate!),
       itemPrice: (int.parse(rate.text) - int.parse(taxes.text)),
       total: int.parse(rate.text) * int.parse(quantity.text),
     );
