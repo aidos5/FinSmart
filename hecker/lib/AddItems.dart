@@ -35,7 +35,7 @@ class _AddItemsState extends State<AddItems> {
 
   var localStorageItems = LocalStorage('items.json');
   storeItems? storeditems = storeItems();
-  ModelItem? addItem;
+  List<ModelItem>? addItem;
   List<Map<String, dynamic>>? allItems;
 
   Future<String?> GetSerialNumber() async {
@@ -50,12 +50,12 @@ class _AddItemsState extends State<AddItems> {
   Future LoadItems() async {
     var temp = (localStorageItems.getItem('items'));
     if (temp != null) {
-      var tempI = storeItems.fromJson(temp);
-      allItems = List.from(storeditems!.allItem!.map((e) => e));
-      storeditems = await storeItems.fromJson(temp);
-    } else {
-      allItems = [];
-      await localStorageItems.setItem('items', storeditems);
+      storeditems = storeItems.fromJson(temp);
+      allItems = storeditems!.allItem;
+
+      for (Map<String, dynamic> i in allItems!) {
+        addItem!.add(ModelItem.fromJson(i));
+      }
     }
   }
 
