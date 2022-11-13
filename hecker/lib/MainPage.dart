@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:js_util';
+import 'dart:math';
 import 'dart:typed_data';
+import 'package:collection/collection.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +21,6 @@ import 'Model/ShopDetail.dart';
 import 'Model/lastBillDate.dart';
 import 'package:intl/intl.dart';
 
-import 'Model/storeItems.dart';
-
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -27,12 +28,10 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int maxBillCount = 5;
   bool firstopen = true;
-  //Stream<List<ModelItem>> dataItems = readItem();
 
-  storeItems? storeditems;
   List<Map<String, dynamic>>? aI;
 
   List<TextEditingController> quantityEditor = [];
@@ -62,45 +61,52 @@ class _MainPageState extends State<MainPage> {
 
   //List<Bill> bills = [];
 
+  List<bool> hasCheckout = [];
+  TabController? tabController;
+
   @override
   void initState() {
-    fillItems();
+    tabController = new TabController(length: 5, vsync: this);
+
+    LoadItems();
     getDate();
     super.initState();
   }
 
-  void fillItems() async {
-    // dataItems.listen(
-    //   (listofitems) {
-    //     for (ModelItem i in listofitems) {
-    //       allItems.add(i);
+  Future LoadItems() async {
+    var temp = await (localStorageItems.getItem('items'));
+    if (temp != null) {
+      List allItemString = (jsonDecode(temp) as List<dynamic>);
+
+      for (dynamic s in allItemString) {
+        allItems.add(ModelItem.fromJson(jsonDecode(s)));
+      }
+    }
+
+    setState(() {
+      foundItems = List.from(allItems);
+    });
+
+    // if (foundItems.length < 1) {
+    //   print("lowde");
+    //   FirebaseFirestore.instance
+    //       .collection('transactions')
+    //       .doc('category')
+    //       .collection('pincode')
+    //       .doc('shopid')
+    //       .collection('items')
+    //       .snapshots()
+    //       .map((snapshot) => snapshot.docs
+    //           .map((doc) => ModelItem.fromJson(doc.data()))
+    //           .toList())
+    //       .listen((event) {
+    //     for (ModelItem mi in event) {
+    //       allItems.add(mi);
     //     }
 
-    //     setState(() {
-    //       foundItems = List.from(allItems);
-    //     });
-    //   },
-    // );
-
-    //foundItems = List.from(allItems);
-
-    var temp = (localStorageItems.getItem('items'));
-    if (temp != null) {
-      storeditems = storeItems.fromJson(temp);
-      aI = storeditems!.allItem;
-
-      for (Map<String, dynamic> i in aI!) {
-      allItems.add(ModelItem.fromJson(i));
-    }
-
-    } else {
-      aI = [];
-      await localStorageItems.setItem('items', storeditems);
-    }
-
-    
-
-    foundItems = List.from(allItems);
+    //     foundItems = List.from(allItems);
+    //   });
+    // }
   }
 
   void getDate() async {
@@ -124,7 +130,7 @@ class _MainPageState extends State<MainPage> {
     return DefaultTabController(
       length: maxBillCount,
       child: Scaffold(
-          floatingActionButton: count.length != 0
+          floatingActionButton: count.sum > 0
               ? SizedBox(
                   width: 100,
                   child: FloatingActionButton(
@@ -152,7 +158,7 @@ class _MainPageState extends State<MainPage> {
               isScrollable: true,
             ),
           ),
-          body: TabBarView(children: BillView())),
+          body: TabBarView(controller: tabController, children: BillView())),
     );
   }
 
@@ -175,7 +181,6 @@ class _MainPageState extends State<MainPage> {
     final screenwidth = MediaQuery.of(context).size.width;
 
     billtabs = [];
-    print(foundItems.length);
     for (int i = 1; i <= maxBillCount; i++) {
       billtabs.add(
         Tab(
@@ -196,19 +201,17 @@ class _MainPageState extends State<MainPage> {
               ),
               SizedBox(
                 width: screenwidth,
-                child: Expanded(
-                  child: Column(
-                    children: [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: firstopen == true
-                            ? allItems.length
-                            : foundItems.length,
-                        itemBuilder: (context, index) => cardmaker(index),
-                        physics: AlwaysScrollableScrollPhysics(),
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: firstopen == true
+                          ? allItems.length
+                          : foundItems.length,
+                      itemBuilder: (context, index) => cardmaker(index),
+                      physics: AlwaysScrollableScrollPhysics(),
+                    ),
+                  ],
                 ),
               )
             ],

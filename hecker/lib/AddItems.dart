@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/Items.dart';
-import 'package:hecker/Model/storeItems.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,9 +33,7 @@ class _AddItemsState extends State<AddItems> {
   String? scanResult;
 
   var localStorageItems = LocalStorage('items.json');
-  storeItems? storeditems = storeItems();
-  List<ModelItem>? addItem;
-  List<Map<String, dynamic>>? allItems;
+  List<ModelItem> allItems = [];
 
   Future<String?> GetSerialNumber() async {
     var response =
@@ -48,13 +45,12 @@ class _AddItemsState extends State<AddItems> {
   }
 
   Future LoadItems() async {
-    var temp = (localStorageItems.getItem('items'));
+    var temp = await (localStorageItems.getItem('items'));
     if (temp != null) {
-      storeditems = storeItems.fromJson(temp);
-      allItems = storeditems!.allItem;
+      List allItemString = (jsonDecode(temp) as List<dynamic>);
 
-      for (Map<String, dynamic> i in allItems!) {
-        addItem!.add(ModelItem.fromJson(i));
+      for (dynamic s in allItemString) {
+        allItems.add(ModelItem.fromJson(jsonDecode(s)));
       }
     }
   }
@@ -125,22 +121,6 @@ class _AddItemsState extends State<AddItems> {
                   controller: itemDescription,
                 ),
               ),
-//               Padding(
-//                 padding: const EdgeInsets.all(8.0),
-//                 child: TextFormField(
-//                   decoration: const InputDecoration(
-// <<<<<<< HEAD
-//                       labelText: 'Minimum Quantity',
-//                       border: OutlineInputBorder()),
-//                   controller: minimumQuantity,
-//                   keyboardType: TextInputType.number,
-// =======
-//                 padding: const EdgeInsets.all(8.0),
-//                 child: TextFormField(
-//                       labelText: 'Enter unit', border: OutlineInputBorder()),
-//                   controller: unit,
-//                 ),
-//               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -217,7 +197,7 @@ class _AddItemsState extends State<AddItems> {
     await LoadItems();
 
     final docuser;
-    String? id = scanResult;
+    String? id = null;
 
     String? serialNumber = "";
     if (id == null) {
@@ -225,6 +205,8 @@ class _AddItemsState extends State<AddItems> {
         serialNumber = await GetSerialNumber();
       }
 
+      print("yo");
+      print(serialNumber);
       id = serialNumber;
     }
 
@@ -260,7 +242,7 @@ class _AddItemsState extends State<AddItems> {
           .doc(serialNumber);
     }
 
-    allItems!.add(doc);
+    allItems.add(item);
 
     await docuser.set(doc);
 
@@ -270,6 +252,8 @@ class _AddItemsState extends State<AddItems> {
     // });
     // localStorageItems.setItem('items', jsonEncode(itemList));
 
-    localStorageItems.setItem('items', allItems);
+    List<String> allItemString =
+        allItems.map((e) => jsonEncode(e.toJson())).toList();
+    localStorageItems.setItem('items', jsonEncode(allItemString));
   }
 }

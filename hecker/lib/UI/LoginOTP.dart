@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -10,6 +12,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hecker/Signup.dart';
 import 'package:hecker/UI/LoginPIN.dart';
 import 'package:localstorage/localstorage.dart';
+
+import '../Model/ModelItem.dart';
 
 class LoginOTP extends StatefulWidget {
   LoginOTP({Key? key}) : super(key: key);
@@ -26,6 +30,8 @@ class _LoginOTPState extends State<LoginOTP> {
   _LoginOTPState({required this.phoneNo});
 
   String? verificationCode;
+
+  var localStorageItems = LocalStorage('items.json');
 
   var localStorageUser = new LocalStorage('userCred.json');
   var localStorageShop = new LocalStorage('shopDetail.json');
@@ -107,6 +113,27 @@ class _LoginOTPState extends State<LoginOTP> {
                         await localStorageShop.setItem('shop',
                             ShopDetail.fromJson(shopDetailDocData.data()!));
 
+                        FirebaseFirestore.instance
+                            .collection('transactions')
+                            .doc('category')
+                            .collection('pincode')
+                            .doc('shopid')
+                            .collection('items')
+                            .snapshots()
+                            .map((snapshot) => snapshot.docs
+                                .map((doc) => ModelItem.fromJson(doc.data()))
+                                .toList())
+                            .listen((event) async {
+                          List<ModelItem> allItems = [];
+                          for (ModelItem mi in event) {
+                            allItems.add(mi);
+                          }
+
+                          List<dynamic> allItemString =
+                              allItems.map((e) => jsonEncode(e.toJson())).toList();
+                          await localStorageItems.setItem('items', jsonEncode(allItemString));
+                        });
+
                         print("You are logged in!\n" + value.toString());
 
                         Navigator.of(context).pushAndRemoveUntil(
@@ -146,11 +173,15 @@ class _LoginOTPState extends State<LoginOTP> {
             title: Text("Error"),
             content:
                 Text("Your Details doesn't exist! Please Create an account..."),
-            actions: [TextButton(onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (context) => Number()),
-                            (route) => false);
-            }, child: Text("Ok"))],
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => Number()),
+                        (route) => false);
+                  },
+                  child: Text("Ok"))
+            ],
           );
         });
   }
