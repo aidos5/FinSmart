@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'ModelItem.dart';
 
 class TabClass {
-  List<int>? count;
-  List<TextEditingController>? quantityEditor;
+  List<int>? count = [];
+  List<TextEditingController>? quantityEditor = [];
   List<ModelItem>? foundItems;
   List<ModelItem>? billedItems;
   List<Map<String, dynamic>>? billJson;

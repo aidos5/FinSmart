@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:ffi';
-import 'dart:js_util';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:collection/collection.dart';
@@ -31,16 +30,13 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int maxBillCount = 5;
-  bool firstopen = true;
+  bool firstopen = false;
   List<TabClass> tC = [];
-
-  List<TextEditingController> quantityEditor = [];
+  int currentTabIndex = 0;
 
   final localStoragebillDate = LocalStorage('lastBillDate.json');
   var storage = LocalStorage('shopDetail.json');
   var localStorageItems = LocalStorage('items.json');
-
-  List<int> count = [];
 
   List<Widget> tabs = [];
   List<Widget> billtabs = [];
@@ -64,11 +60,23 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    tabController = new TabController(length: 5, vsync: this);
+    tabController = new TabController(length: maxBillCount, vsync: this);
+    tabController!.addListener(() {
+      setState(() {
+        currentTabIndex = tabController!.index;
+      });
+    });
 
     LoadItems();
     getDate();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    tabController!.dispose();
+    super.dispose();
   }
 
   Future LoadItems() async {
@@ -80,6 +88,19 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         allItems.add(ModelItem.fromJson(jsonDecode(s)));
       }
     }
+
+    setState(() {
+      for (int i = 0; i < maxBillCount; i++) {
+        tC.add(TabClass());
+        tC[i].foundItems = List.from(allItems);
+        tC[i].quantityEditor = [];
+        tC[i].count = [];
+        for (int j = 0; j < allItems.length; j++) {
+          tC[i].quantityEditor!.add(new TextEditingController());
+          tC[i].count!.add(0);
+        }
+      }
+    });
 
     // if (tC[i].foundItems.length < 1) {
     //   print("lowde");
@@ -124,7 +145,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     return DefaultTabController(
       length: maxBillCount,
       child: Scaffold(
-          floatingActionButton: count.sum > 0
+          floatingActionButton: tC[currentTabIndex].count!.sum > 0
               ? SizedBox(
                   width: 100,
                   child: FloatingActionButton(
@@ -177,10 +198,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     billtabs = [];
     for (int i = 0; i < maxBillCount; i++) {
-      tC.add(TabClass());
-      setState(() {
-        tC[i].foundItems = List.from(allItems);
-      });
+      // tC.add(TabClass());
+      // setState(() {
+      //   tC[i].foundItems = List.from(allItems);
+
+      //   tC[i].quantityEditor = [];
+      //   tC[i].count = [];
+      //   for (int i = 0; i < allItems.length; i++) {
+      //     tC[i].quantityEditor!.add(new TextEditingController());
+      //     tC[i].count!.add(0);
+      //   }
+      // });
       billtabs.add(
         Tab(
           child: Column(
@@ -318,9 +346,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Widget quantityField(int index, int i) {
-    count.add(0);
-    quantityEditor.add(TextEditingController());
-    quantityEditor[index].text = count[index].toString();
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -363,8 +388,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           () {
                             tC[i].count![index]--;
                             // quantityEditor[index].text = count[index].toString();
-                            quantityEditor[index].value = TextEditingValue(
-                              text: count[index].toString(),
+                            tC[i].quantityEditor![index].value =
+                                TextEditingValue(
+                              text: tC[i].count![index].toString(),
                               selection: TextSelection.collapsed(
                                 offset: 0,
                               ),
@@ -402,7 +428,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     () {
                       tC[i].count![index]++;
                       tC[i].quantityEditor![index].value = TextEditingValue(
-                        text: count[index].toString(),
+                        text: tC[i].count![index].toString(),
                         selection: TextSelection.collapsed(
                           offset: 0,
                         ),
