@@ -31,6 +31,8 @@ class _AddItemsState extends State<AddItems> {
   final expDate = TextEditingController();
 
   String? scanResult;
+  DateTime? dateTime = DateTime.now();
+  DateTime? newDate;
 
   var localStorageItems = LocalStorage('items.json');
   List<ModelItem> allItems = [];
@@ -150,11 +152,34 @@ class _AddItemsState extends State<AddItems> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'Expiry Date', border: OutlineInputBorder()),
-                  controller: expDate,
-                  keyboardType: TextInputType.datetime,
+                child: Row(
+                  children: [
+                    Text(
+                      'Enter Expiry date: ',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(
+                      width: screenwidth / 4.5,
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        newDate = await showDatePicker(
+                            context: context,
+                            initialDate: dateTime!,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2200));
+
+                        if (newDate == null) {
+                          newDate = dateTime;
+                        }
+
+                        setState(() => dateTime = newDate);
+                      },
+                      child: Text('${dateTime!.day}/' +
+                          '${dateTime!.month}/' +
+                          '${dateTime!.year}'),
+                    )
+                  ],
                 ),
               ),
               MaterialButton(
@@ -218,7 +243,7 @@ class _AddItemsState extends State<AddItems> {
       unit: unit.text,
       rate: int.parse(rate.text),
       taxes: int.parse(taxes.text),
-      expDate: DateFormat.yMd().format(DateTime.now()),
+      expDate: DateFormat.yMd().format(newDate!),
       itemPrice: (int.parse(rate.text) - int.parse(taxes.text)),
       total: int.parse(rate.text) * int.parse(quantity.text),
     );
