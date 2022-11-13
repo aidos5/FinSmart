@@ -8,6 +8,7 @@ import 'package:collection/collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hecker/Model/TabClass.dart';
 import 'package:hecker/Navigation.dart';
 import 'package:hecker/Payments.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -31,8 +32,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int maxBillCount = 5;
   bool firstopen = true;
-
-  List<Map<String, dynamic>>? aI;
+  List<TabClass> tC = [];
 
   List<TextEditingController> quantityEditor = [];
 
@@ -46,8 +46,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   List<Widget> billtabs = [];
 
   List<ModelItem> allItems = [];
-  List<ModelItem> foundItems = [];
-  List<ModelItem> billedItems = [];
   List<Map<String, dynamic>> billJson = [];
   String billNo = '';
 
@@ -83,11 +81,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       }
     }
 
-    setState(() {
-      foundItems = List.from(allItems);
-    });
-
-    // if (foundItems.length < 1) {
+    // if (tC[i].foundItems.length < 1) {
     //   print("lowde");
     //   FirebaseFirestore.instance
     //       .collection('transactions')
@@ -104,7 +98,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     //       allItems.add(mi);
     //     }
 
-    //     foundItems = List.from(allItems);
+    //     tC[i].foundItems = List.from(allItems);
     //   });
     // }
   }
@@ -136,6 +130,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   child: FloatingActionButton(
                     shape: BeveledRectangleBorder(),
                     onPressed: (() {
+                      generateBill();
                       Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(builder: (context) => Payments()),
                           (route) => false);
@@ -181,7 +176,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     final screenwidth = MediaQuery.of(context).size.width;
 
     billtabs = [];
-    for (int i = 1; i <= maxBillCount; i++) {
+    for (int i = 0; i < maxBillCount; i++) {
+      tC.add(TabClass());
+      setState(() {
+        tC[i].foundItems = List.from(allItems);
+      });
       billtabs.add(
         Tab(
           child: Column(
@@ -207,8 +206,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       shrinkWrap: true,
                       itemCount: firstopen == true
                           ? allItems.length
-                          : foundItems.length,
-                      itemBuilder: (context, index) => cardmaker(index),
+                          : tC[i].foundItems!.length,
+                      itemBuilder: (context, index) => cardmaker(index, i),
                       physics: AlwaysScrollableScrollPhysics(),
                     ),
                   ],
@@ -222,7 +221,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     return billtabs;
   }
 
-  Card cardmaker(int index) {
+  Card cardmaker(int index, int i) {
     return firstopen == false
         ? Card(
             child: Column(
@@ -234,7 +233,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       style: TextStyle(fontSize: 20),
                     ),
                     Text(
-                      '${foundItems[index].name}',
+                      '${tC[i].foundItems![index].name}',
                       style: TextStyle(fontSize: 20),
                     ),
                     SizedBox(
@@ -245,11 +244,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       style: TextStyle(fontSize: 20),
                     ),
                     Text(
-                      '${foundItems[index].quantity} ',
+                      '${tC[i].foundItems![index].quantity} ',
                       style: TextStyle(fontSize: 20),
                     ),
                     Text(
-                      '${foundItems[index].unit}',
+                      '${tC[i].foundItems![index].unit}',
                       style: TextStyle(fontSize: 20),
                     ),
                   ],
@@ -261,12 +260,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       style: TextStyle(fontSize: 20),
                     ),
                     Text(
-                      '${foundItems[index].rate}',
+                      '${tC[i].foundItems![index].rate}',
                       style: TextStyle(fontSize: 20),
                     ),
                   ],
                 ),
-                quantityField(index),
+                quantityField(index, i),
               ],
             ),
           )
@@ -312,13 +311,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     ),
                   ],
                 ),
-                quantityField(index),
+                quantityField(index, i),
               ],
             ),
           );
   }
 
-  Widget quantityField(int index) {
+  Widget quantityField(int index, int i) {
     count.add(0);
     quantityEditor.add(TextEditingController());
     quantityEditor[index].text = count[index].toString();
@@ -337,7 +336,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 onPressed: () {
                   setState(
                     () {
-                      if (count[index] == 0) {
+                      if (tC[i].count![index] == 0) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           backgroundColor: Colors.transparent,
                           elevation: 0,
@@ -362,7 +361,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       } else {
                         setState(
                           () {
-                            count[index]--;
+                            tC[i].count![index]--;
                             // quantityEditor[index].text = count[index].toString();
                             quantityEditor[index].value = TextEditingValue(
                               text: count[index].toString(),
@@ -382,9 +381,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 child: TextField(
                   //initialValue: '${count[index]}',
                   onChanged: (value) {
-                    if (value.isNotEmpty) count[index] = int.parse(value);
+                    if (value.isNotEmpty)
+                      tC[i].count![index] = int.parse(value);
                   },
-                  controller: quantityEditor[index],
+                  controller: tC[i].quantityEditor![index],
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
@@ -400,8 +400,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 onPressed: () {
                   setState(
                     () {
-                      count[index]++;
-                      quantityEditor[index].value = TextEditingValue(
+                      tC[i].count![index]++;
+                      tC[i].quantityEditor![index].value = TextEditingValue(
                         text: count[index].toString(),
                         selection: TextSelection.collapsed(
                           offset: 0,
@@ -421,6 +421,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   Future generateBill() async {
     String tempIter = '';
     int temp;
+    var bill;
 
     if (lBD!.lastBill == null) {
       lBD!.lastBill = DateFormat.yMd().format(DateTime.now());
@@ -466,17 +467,27 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     ]);
 
     billNo = base62.encode(hash);
-    billJson.add({});
-    totalCost = 0;
-    for (var i = 0; i < foundItems.length; i++) {
-      if (count[i] != 0) {
-        billedItems = List.from(foundItems);
-        billJson[i] = billedItems[i].toJson();
-        totalCost += billedItems[i].rate * count[i];
+
+    // for (var i = 0; i < tC[i].foundItems!.length; i++) {
+    //   if (count[i] != 0) {
+    //     tC[i].billedItems = List.from(tC[i].foundItems!);
+    //     billJson[i] = tC[i].billedItems![i].toJson();
+    //     totalCost += tC[i].billedItems![i].rate * count[i];
+    //   }
+    // }
+    for (int i = 0; i < tC.length; i++) {
+      tC[i].totalCost = 0;
+      tC[i].billJson!.add({});
+      for (int j = 0; j < tC[i].foundItems!.length; j++) {
+        if (tC[j].count![i] != 0) {
+          tC[j].billedItems = List.from(tC[i].foundItems!);
+          billJson[i] = tC[j].billedItems![i].toJson();
+          totalCost += tC[j].billedItems![i].rate * tC[j].count![i];
+        }
       }
     }
 
-    final bill = Bill(
+    bill = Bill(
         shopName: 'shopName',
         shopAddress: 'shopAddress',
         GSTNumber: 'GSTNumber',
@@ -517,7 +528,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     }
 
     setState(() {
-      foundItems = List.from(results);
+      for (var i = 0; i < tC.length; i++) {
+        tC[i].foundItems = List.from(results);
+      }
     });
   }
 
