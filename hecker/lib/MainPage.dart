@@ -39,7 +39,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   var localStorageItems = LocalStorage('items.json');
 
   List<Widget> tabs = [];
-  List<Widget> billtabs = [];
+  List<Tab> displayTabs = [];
 
   List<ModelItem> allItems = [];
   List<Map<String, dynamic>> billJson = [];
@@ -91,7 +91,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     setState(() {
       for (int i = 0; i < maxBillCount; i++) {
-        tC.add(TabClass());
+        tC.add(TabClass(billtabs: Tab()));
         tC[i].foundItems = List.from(allItems);
         tC[i].quantityEditor = [];
         tC[i].count = [];
@@ -196,7 +196,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   List<Widget> BillView() {
     final screenwidth = MediaQuery.of(context).size.width;
 
-    billtabs = [];
+    displayTabs = [];
     for (int i = 0; i < maxBillCount; i++) {
       // tC.add(TabClass());
       // setState(() {
@@ -209,44 +209,45 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       //     tC[i].count!.add(0);
       //   }
       // });
-      billtabs.add(
-        Tab(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: 'Search Item',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.blueAccent),
-                  ),
+
+      tC[i].billtabs = Tab(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: 'Search Item',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(color: Colors.blueAccent),
                 ),
-                onChanged: searchItems,
               ),
-              SizedBox(
-                width: screenwidth,
-                child: Column(
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: firstopen == true
-                          ? allItems.length
-                          : tC[i].foundItems!.length,
-                      itemBuilder: (context, index) => cardmaker(index, i),
-                      physics: AlwaysScrollableScrollPhysics(),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+              onChanged: searchItems,
+            ),
+            SizedBox(
+              width: screenwidth,
+              child: Column(
+                children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: firstopen == true
+                        ? allItems.length
+                        : tC[i].foundItems!.length,
+                    itemBuilder: (context, index) => cardmaker(index, i),
+                    physics: AlwaysScrollableScrollPhysics(),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       );
+      displayTabs[i] = tC[i].billtabs;
     }
-    return billtabs;
+
+    return displayTabs;
   }
 
   Card cardmaker(int index, int i) {
