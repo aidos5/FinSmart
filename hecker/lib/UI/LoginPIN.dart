@@ -86,7 +86,7 @@ class _LoginPINState extends State<LoginPIN> {
 
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                  builder: (context) => AddItems()),
+                                  builder: (context) => MainPage()),
                               (route) => false);
                         } else {
                           showDialog(

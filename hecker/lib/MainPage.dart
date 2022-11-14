@@ -58,16 +58,19 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   List<bool> hasCheckout = [];
   TabController? tabController;
 
+  bool isInit = false;
+
   @override
   void initState() {
+    print("Lowde");
+    LoadItems();
+
     tabController = new TabController(length: maxBillCount, vsync: this);
     tabController!.addListener(() {
       setState(() {
         currentTabIndex = tabController!.index;
       });
     });
-
-    LoadItems();
     getDate();
     super.initState();
   }
@@ -80,6 +83,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Future LoadItems() async {
+    // setState(() {
+    //   for (int i = 0; i < maxBillCount; i++) {
+    //     tC.add(TabClass(
+    //         billtabs: Tab(
+    //       text: "Loading...",
+    //     )));
+    //   }
+    // });
+
     var temp = await (localStorageItems.getItem('items'));
     if (temp != null) {
       List allItemString = (jsonDecode(temp) as List<dynamic>);
@@ -91,7 +103,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     setState(() {
       for (int i = 0; i < maxBillCount; i++) {
-        tC.add(TabClass(billtabs: Tab()));
+        tC.add(TabClass());
         tC[i].foundItems = List.from(allItems);
         tC[i].quantityEditor = [];
         tC[i].count = [];
@@ -122,6 +134,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     //     tC[i].foundItems = List.from(allItems);
     //   });
     // }
+
+    print("Lowde : " + tC.length.toString());
+
+    isInit = true;
   }
 
   void getDate() async {
@@ -142,40 +158,49 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   final controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: maxBillCount,
-      child: Scaffold(
-          floatingActionButton: tC[currentTabIndex].count!.sum > 0
-              ? SizedBox(
-                  width: 100,
-                  child: FloatingActionButton(
-                    shape: BeveledRectangleBorder(),
-                    onPressed: (() {
-                      generateBill();
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => Payments()),
-                          (route) => false);
-                    }),
-                    child: Text('Checkout'),
+    return !isInit
+        ? Scaffold(
+            appBar: AppBar(
+              title: Text("Finsmart"),
+            ),
+            body: Center(child: Text("Loading...")),
+          )
+        : DefaultTabController(
+            length: maxBillCount,
+            child: Scaffold(
+                floatingActionButton: tC[currentTabIndex].count!.sum > 0
+                    ? SizedBox(
+                        width: 100,
+                        child: FloatingActionButton(
+                          shape: BeveledRectangleBorder(),
+                          onPressed: (() {
+                            generateBill();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => Payments()),
+                                (route) => false);
+                          }),
+                          child: Text('Checkout'),
+                        ),
+                      )
+                    : null,
+                drawer: Navigation(),
+                resizeToAvoidBottomInset: true,
+                appBar: AppBar(
+                  centerTitle: true,
+                  title: Text(
+                    'FinSmart',
+                    style: TextStyle(fontSize: 37),
                   ),
-                )
-              : null,
-          drawer: Navigation(),
-          resizeToAvoidBottomInset: true,
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(
-              'FinSmart',
-              style: TextStyle(fontSize: 37),
-            ),
-            backgroundColor: HexColor('#4cbfa6'),
-            bottom: TabBar(
-              tabs: allTabs(),
-              isScrollable: true,
-            ),
-          ),
-          body: TabBarView(controller: tabController, children: BillView())),
-    );
+                  backgroundColor: HexColor('#4cbfa6'),
+                  bottom: TabBar(
+                    tabs: allTabs(),
+                    isScrollable: true,
+                  ),
+                ),
+                body: TabBarView(
+                    controller: tabController, children: BillView())),
+          );
   }
 
   List<Widget> allTabs() {
@@ -244,7 +269,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ],
         ),
       );
-      displayTabs[i] = tC[i].billtabs;
+
+      displayTabs.add(tC[i].billtabs!);
     }
 
     return displayTabs;
