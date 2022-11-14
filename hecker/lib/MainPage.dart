@@ -165,42 +165,40 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
             body: Center(child: Text("Loading...")),
           )
-        : DefaultTabController(
-            length: maxBillCount,
-            child: Scaffold(
-                floatingActionButton: tC[currentTabIndex].count!.sum > 0
-                    ? SizedBox(
-                        width: 100,
-                        child: FloatingActionButton(
-                          shape: BeveledRectangleBorder(),
-                          onPressed: (() {
-                            generateBill();
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => Payments()),
-                                (route) => false);
-                          }),
-                          child: Text('Checkout'),
-                        ),
-                      )
-                    : null,
-                drawer: Navigation(),
-                resizeToAvoidBottomInset: true,
-                appBar: AppBar(
-                  centerTitle: true,
-                  title: Text(
-                    'FinSmart',
-                    style: TextStyle(fontSize: 37),
-                  ),
-                  backgroundColor: HexColor('#4cbfa6'),
-                  bottom: TabBar(
-                    tabs: allTabs(),
-                    isScrollable: true,
-                  ),
-                ),
-                body: TabBarView(
-                    controller: tabController, children: BillView())),
-          );
+        : Scaffold(
+            floatingActionButton: tC[currentTabIndex].count!.sum > 0
+                ? SizedBox(
+                    width: 100,
+                    child: FloatingActionButton(
+                      shape: BeveledRectangleBorder(),
+                      onPressed: (() {
+                        generateBill();
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) => Payments()),
+                            (route) => false);
+                      }),
+                      child: Text('Checkout'),
+                    ),
+                  )
+                : null,
+            drawer: Navigation(),
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text(
+                'FinSmart',
+                style: TextStyle(fontSize: 37),
+              ),
+              backgroundColor: HexColor('#4cbfa6'),
+              bottom: TabBar(
+                tabs: allTabs(),
+                isScrollable: true,
+                controller: tabController,
+              ),
+            ),
+            body: TabBarView(
+                controller: tabController, children: BillView()));
   }
 
   List<Widget> allTabs() {
