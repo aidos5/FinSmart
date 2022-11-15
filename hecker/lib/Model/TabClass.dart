@@ -11,6 +11,8 @@ class TabClass {
   String? billNo;
   int? totalCost;
 
+  bool? isPaymentMode;
+
   TabClass(
       {this.foundItems,
       this.billedItems,
@@ -19,5 +21,6 @@ class TabClass {
       this.billNo,
       this.totalCost,
       this.count,
-      this.quantityEditor});
+      this.quantityEditor,
+      this.isPaymentMode});
 }

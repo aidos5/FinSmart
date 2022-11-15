@@ -39,6 +39,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     // TODO: implement initState
     GetUserCred();
+
+    super.initState();
   }
 
   void GetUserCred() async {

@@ -174,8 +174,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       onPressed: (() {
                         generateBill();
                         Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => Payments()),
+                            MaterialPageRoute(builder: (context) => Payments()),
                             (route) => false);
                       }),
                       child: Text('Checkout'),
@@ -197,8 +196,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 controller: tabController,
               ),
             ),
-            body: TabBarView(
-                controller: tabController, children: BillView()));
+            body: TabBarView(controller: tabController, children: BillView()));
   }
 
   List<Widget> allTabs() {
@@ -233,45 +231,44 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       //   }
       // });
 
-      tC[i].billtabs = Tab(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: 'Search Item',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: Colors.blueAccent),
-                ),
-              ),
-              onChanged: searchItems,
-            ),
-            SizedBox(
-              width: screenwidth,
-              child: Column(
-                children: [
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: firstopen == true
-                        ? allItems.length
-                        : tC[i].foundItems!.length,
-                    itemBuilder: (context, index) => cardmaker(index, i),
-                    physics: AlwaysScrollableScrollPhysics(),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      );
+      tC[i].billtabs = Tab(child: TabView(i, screenwidth));
 
       displayTabs.add(tC[i].billtabs!);
     }
 
     return displayTabs;
+  }
+
+  Widget TabView(int i, double screenWidth) {
+    return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+      TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.search),
+          hintText: 'Search Item',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(color: Colors.blueAccent),
+          ),
+        ),
+        onChanged: searchItems,
+      ),
+      SizedBox(
+        width: screenWidth,
+        child: Column(
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: firstopen == true
+                  ? allItems.length
+                  : tC[i].foundItems!.length,
+              itemBuilder: (context, index) => cardmaker(index, i),
+              physics: AlwaysScrollableScrollPhysics(),
+            ),
+          ],
+        ),
+      ),
+    ]);
   }
 
   Card cardmaker(int index, int i) {
