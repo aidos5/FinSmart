@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/Model/TabClass.dart';
 import 'package:hecker/Navigation.dart';
+import 'package:hecker/Number.dart';
 import 'package:hecker/Payments.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -35,7 +36,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int currentTabIndex = 0;
 
   final localStoragebillDate = LocalStorage('lastBillDate.json');
-  var storage = LocalStorage('shopDetail.json');
+  var localStorageShop = LocalStorage('shopDetail.json');
   var localStorageItems = LocalStorage('items.json');
 
   List<Widget> tabs = [];
@@ -47,7 +48,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   int totalCost = 0;
 
-  String shopID = '12345678910';
+  ShopDetail? shopDetail;
   var base62 = BaseXCodec(
       '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
@@ -82,6 +83,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Future LoadShopDetail() async {
+    var shopJSON = await localStorageShop.getItem('shop');
+    shopDetail = ShopDetail.fromJson((shopJSON as Map<String, dynamic>));
+  }
+
   Future LoadItems() async {
     // setState(() {
     //   for (int i = 0; i < maxBillCount; i++) {
@@ -104,6 +110,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     setState(() {
       for (int i = 0; i < maxBillCount; i++) {
         tC.add(TabClass());
+        tC[i].allItems = List.from(allItems);
         tC[i].foundItems = List.from(allItems);
         tC[i].quantityEditor = [];
         tC[i].count = [];
@@ -173,9 +180,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       shape: BeveledRectangleBorder(),
                       onPressed: (() {
                         generateBill();
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (context) => Payments()),
-                            (route) => false);
+                        // Navigator.of(context).pushAndRemoveUntil(
+                        //     MaterialPageRoute(builder: (context) => Payments()),
+                        //     (route) => false);
                       }),
                       child: Text('Checkout'),
                     ),
@@ -467,54 +474,79 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Future generateBill() async {
-    String tempIter = '';
-    int temp;
-    var bill;
+    var formatter = new DateFormat('ddMMyyyy');
+    String date = formatter.format(DateTime.now());
+    // String date =
+    //     DateFormat(DateTime.now()).toString().replaceAll(RegExp("/"), '');
 
-    if (lBD!.lastBill == null) {
-      lBD!.lastBill = DateFormat.yMd().format(DateTime.now());
-      lBD!.lastBill = lBD!.lastBill!.replaceAll(new RegExp(r'[^\w\s]+'), '');
-      lBD!.iterator = '000001';
-
-      await localStoragebillDate.setItem('lastBillDate', lBD);
-
-      print(await localStoragebillDate.getItem('lastBillDate'));
-    } else if (lBD!.lastBill != DateFormat.yMd().format(DateTime.now())) {
-      lBD!.lastBill = DateFormat.yMd().format(DateTime.now());
-      lBD!.lastBill != lBD!.lastBill!.replaceAll(new RegExp(r'[^\w\s]+'), '');
-
-      await localStoragebillDate.setItem('lastBillDate', lBD);
-    } else {
-      temp = int.parse(lBD!.iterator as String);
-      temp++;
-
-      for (int i = 0; i < 6 - temp.toString().length; i++) {
-        tempIter = tempIter + '0';
-      }
-
-      tempIter = tempIter + temp.toString();
-      lBD!.iterator = tempIter;
-      await localStoragebillDate.setItem('lastBillDate', lBD);
-
-      print(await localStoragebillDate.getItem('lastBillDate'));
+    if (shopDetail == null) {
+      // Show error
+      await LoadShopDetail();
     }
 
-    var billN = ('$shopID${lBD!.lastBill}${lBD!.iterator}');
-    print(billN);
+    String? lastBillDate = await localStoragebillDate.getItem('lastBilldate');
+    if (lastBillDate == null) {
+      await localStoragebillDate.setItem('lastBillDate', date);
+      lastBillDate = date;
+    }
 
-    var encoded = base64.encode([
-      int.parse(shopID),
-      int.parse(lBD!.lastBill!),
-      int.parse(lBD!.iterator!)
-    ]);
+    var billC = await localStoragebillDate.getItem('billCount');
+    if (billC == null || lastBillDate != date) {
+      await localStoragebillDate.setItem('billCount', '0');
+      billC = '0';
+    }
+    int billCount = int.parse(billC.toString());
+    billCount++;
+    await localStoragebillDate.setItem('billCount', billCount.toString());
 
-    var hash = Uint8List.fromList([
-      int.parse(shopID),
-      int.parse(lBD!.lastBill!),
-      int.parse(lBD!.iterator!)
-    ]);
+    //{payment mode}{shop id}{date}{bill count of that day}
+    String billNumber = "11${shopDetail!.id}${date}${billCount}";
+    String billID = GetBillID(BigInt.parse(billNumber));
 
-    billNo = base62.encode(hash);
+    // if (lBD!.lastBill == null) {
+    //   lBD!.lastBill = DateFormat.yMd().format(DateTime.now());
+    //   lBD!.lastBill = lBD!.lastBill!.replaceAll(new RegExp(r'[^\w\s]+'), '');
+    //   lBD!.iterator = '000001';
+
+    //   await localStoragebillDate.setItem('lastBillDate', lBD);
+
+    //   print(await localStoragebillDate.getItem('lastBillDate'));
+    // } else if (lBD!.lastBill != DateFormat.yMd().format(DateTime.now())) {
+    //   lBD!.lastBill = DateFormat.yMd().format(DateTime.now());
+    //   lBD!.lastBill != lBD!.lastBill!.replaceAll(new RegExp(r'[^\w\s]+'), '');
+
+    //   await localStoragebillDate.setItem('lastBillDate', lBD);
+    // } else {
+    //   temp = int.parse(lBD!.iterator as String);
+    //   temp++;
+
+    //   for (int i = 0; i < 6 - temp.toString().length; i++) {
+    //     tempIter = tempIter + '0';
+    //   }
+
+    //   tempIter = tempIter + temp.toString();
+    //   lBD!.iterator = tempIter;
+    //   await localStoragebillDate.setItem('lastBillDate', lBD);
+
+    //   print(await localStoragebillDate.getItem('lastBillDate'));
+    // }
+
+    // var billN = ('$shopID${lBD!.lastBill}${lBD!.iterator}');
+    // print(billN);
+
+    // var encoded = base64.encode([
+    //   int.parse(shopID),
+    //   int.parse(lBD!.lastBill!),
+    //   int.parse(lBD!.iterator!)
+    // ]);
+
+    // var hash = Uint8List.fromList([
+    //   int.parse(shopID),
+    //   int.parse(lBD!.lastBill!),
+    //   int.parse(lBD!.iterator!)
+    // ]);
+
+    // billNo = base62.encode(hash);
 
     // for (var i = 0; i < tC[i].foundItems!.length; i++) {
     //   if (count[i] != 0) {
@@ -523,32 +555,37 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     //     totalCost += tC[i].billedItems![i].rate * count[i];
     //   }
     // }
-    for (int i = 0; i < tC.length; i++) {
-      tC[i].totalCost = 0;
-      tC[i].billJson!.add({});
-      for (int j = 0; j < tC[i].foundItems!.length; j++) {
-        if (tC[j].count![i] != 0) {
-          tC[j].billedItems = List.from(tC[i].foundItems!);
-          billJson[i] = tC[j].billedItems![i].toJson();
-          totalCost += tC[j].billedItems![i].rate * tC[j].count![i];
-        }
+    List<String> items = [];
+    TabClass curTab = tC[currentTabIndex];
+
+    for (int i = 0; i < curTab.count!.length; i++) {
+      if (curTab.count![i] != 0) {
+        items.add("${curTab.allItems![i].id}_${curTab.count![i]}");
       }
     }
 
-    bill = Bill(
-        shopName: 'shopName',
-        shopAddress: 'shopAddress',
-        GSTNumber: 'GSTNumber',
-        billJson: billJson,
-        totalCost: totalCost,
-        billNumber: billNo,
-        paymentMode: 'paymentMode',
-        customerName: 'customerName',
-        customerNumber: 'customerNumber');
+    // for (int i = 0; i < tC.length; i++) {
+    //   tC[i].totalCost = 0;
+    //   tC[i].billJson!.add({});
+    //   for (int j = 0; j < tC[i].foundItems!.length; j++) {
+    //     if (tC[j].count![i] != 0) {
+    //       tC[j].billedItems = List.from(tC[i].foundItems!);
+    //       billJson[i] = tC[j].billedItems![i].toJson();
+    //       totalCost += tC[j].billedItems![i].rate * tC[j].count![i];
+    //     }
+    //   }
+    // }
+
+    Bill bill = Bill(
+      items: items,
+      billID: billID,
+      customerDetails: 'customerName_customerNumber',
+    );
 
     //print(bill.totalCost);
 
-    final doc = bill.toJson();
+    String billStr = bill.toJson().toString();
+    print("Bill : " + billStr);
     final docuser = FirebaseFirestore.instance
         .collection('transactions')
         .doc('category')
@@ -557,7 +594,29 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         .collection('bills')
         .doc('day2');
 
-    await docuser.set(doc);
+    List<dynamic> billArr = [];
+    billArr.add(billStr);
+
+    // Store it in local storage
+
+    await docuser.update({'bills': FieldValue.arrayUnion(billArr)});
+  }
+
+  String GetBillID(BigInt n) {
+    String characterSet =
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    BigInt zero = BigInt.from(0);
+    BigInt six2 = BigInt.from(62);
+    BigInt r;
+
+    String billID = "";
+    while (n > zero) {
+      r = n % six2;
+      n ~/= six2;
+      billID = characterSet[r.toInt()] + billID;
+    }
+
+    return billID;
   }
 
   void searchItems(String query) {

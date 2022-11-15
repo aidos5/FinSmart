@@ -1,50 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'ModelItem.dart';
 
+part 'Bill.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class Bill {
-  String shopName;
-  String shopAddress;
-  String GSTNumber;
-  List<Map<String, dynamic>> billJson = [];
-  int totalCost;
-  String billNumber;
-  String paymentMode;
-  String customerName;
-  String customerNumber;
+  List<String> items = [];
+  String billID;
+  String customerDetails;
 
   Bill({
-    required this.shopName,
-    required this.shopAddress,
-    required this.GSTNumber,
-    required this.billJson,
-    required this.totalCost,
-    required this.billNumber,
-    required this.paymentMode,
-    required this.customerName,
-    required this.customerNumber,
+    required this.items,
+    required this.billID,
+    required this.customerDetails,
   });
 
-  Map<String, dynamic> toJson() => {
-        'shopName': shopName,
-        'shopAddress': shopAddress,
-        'GSTNumber': GSTNumber,
-        'billJson': billJson,
-        'totalCost': totalCost,
-        'billNumber': billNumber,
-        'paymentMode': paymentMode,
-        'customerName': customerName,
-        'customerNumber': customerNumber,
-      };
+  /// factory.
+  factory Bill.fromJson(Map<String, dynamic> json) => _$BillFromJson(json);
 
-  static Bill fromJson(Map<String, dynamic> json) => Bill(
-        shopName: json['shopName'],
-        shopAddress: json['shopAddress'],
-        GSTNumber: json['GSTNumber'],
-        billJson: json['billJson'],
-        totalCost: json['totalCost'],
-        billNumber: json['billNumber'],
-        paymentMode: json['paymentMode'],
-        customerName: json['customerName'],
-        customerNumber: json['customerNumber'],
-      );
+  /// Connect the generated [_$PersonToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$BillToJson(this);
 }

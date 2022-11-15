@@ -1,5 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'ModelItem.g.dart';
+
+@JsonSerializable()
 class ModelItem {
   String name;
   String description;
@@ -26,31 +30,12 @@ class ModelItem {
     required this.total,
   });
 
-  Map<String, dynamic> toJson() => {
-        'id':id,
-        'name': name,
-        'description': description,
-        'quantity': quantity,
-        'unit': unit,
-        'rate': rate,
-        'taxes': taxes,
-        'expDate': expDate,
-        'itemPrice': (rate - taxes),
-        'total': quantity * rate
-      };
+  /// factory.
+  factory ModelItem.fromJson(Map<String, dynamic> json) =>
+      _$ModelItemFromJson(json);
 
-  static ModelItem fromJson(Map<String, dynamic> json) => ModelItem(
-        id: json['id'],
-        name: json['name'],
-        description: json['description'],
-        quantity: json['quantity'],
-        unit: json['unit'],
-        rate: json['rate'],
-        taxes: json['taxes'],
-        expDate: (json['expDate']),
-        itemPrice: json['itemPrice'],
-        total: json['total'],
-      );
+  /// Connect the generated [_$PersonToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$ModelItemToJson(this);
 }
 
 class SerialNumber {

@@ -228,8 +228,6 @@ class _ShopDetailsState extends State<ShopDetails> {
                                   MaterialPageRoute(
                                       builder: (context) => AccountDone()),
                                   (route) => false);
-                
-                              return;
                             } else {
                               print("UnSuccessfull");
                             }

@@ -5,6 +5,7 @@ class TabClass {
   List<int>? count = [];
   Tab? billtabs;
   List<TextEditingController>? quantityEditor = [];
+  List<ModelItem>? allItems;
   List<ModelItem>? foundItems;
   List<ModelItem>? billedItems;
   List<Map<String, dynamic>>? billJson;
