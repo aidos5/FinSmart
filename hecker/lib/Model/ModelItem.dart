@@ -14,7 +14,6 @@ class ModelItem {
   int rate;
   int taxes;
   String expDate;
-  int itemPrice;
   int total;
 
   ModelItem({
@@ -26,7 +25,6 @@ class ModelItem {
     required this.rate,
     this.taxes = 0,
     required this.expDate,
-    required this.itemPrice,
     required this.total,
   });
 

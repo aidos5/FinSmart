@@ -7,12 +7,14 @@ import 'package:collection/collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hecker/Model/BillItem.dart';
 import 'package:hecker/Model/TabClass.dart';
 import 'package:hecker/Navigation.dart';
 import 'package:hecker/Number.dart';
 import 'package:hecker/Payments.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'Model/Bill.dart';
 import 'Model/ModelItem.dart';
 import 'package:localstorage/localstorage.dart';
@@ -114,35 +116,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         tC[i].foundItems = List.from(allItems);
         tC[i].quantityEditor = [];
         tC[i].count = [];
+        tC[i].showPaymentView = false;
         for (int j = 0; j < allItems.length; j++) {
           tC[i].quantityEditor!.add(new TextEditingController());
           tC[i].count!.add(0);
         }
       }
     });
-
-    // if (tC[i].foundItems.length < 1) {
-    //   print("lowde");
-    //   FirebaseFirestore.instance
-    //       .collection('transactions')
-    //       .doc('category')
-    //       .collection('pincode')
-    //       .doc('shopid')
-    //       .collection('items')
-    //       .snapshots()
-    //       .map((snapshot) => snapshot.docs
-    //           .map((doc) => ModelItem.fromJson(doc.data()))
-    //           .toList())
-    //       .listen((event) {
-    //     for (ModelItem mi in event) {
-    //       allItems.add(mi);
-    //     }
-
-    //     tC[i].foundItems = List.from(allItems);
-    //   });
-    // }
-
-    print("Lowde : " + tC.length.toString());
 
     isInit = true;
   }
@@ -173,7 +153,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             body: Center(child: Text("Loading...")),
           )
         : Scaffold(
-            floatingActionButton: tC[currentTabIndex].count!.sum > 0
+            floatingActionButton: (tC[currentTabIndex].count!.sum > 0 && tC[currentTabIndex].showPaymentView! != true)
                 ? SizedBox(
                     width: 100,
                     child: FloatingActionButton(
@@ -238,7 +218,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       //   }
       // });
 
-      tC[i].billtabs = Tab(child: TabView(i, screenwidth));
+      tC[i].billtabs = Tab(
+          child: tC[i].showPaymentView! == false
+              ? TabView(i, screenwidth)
+              : PaymentView(tC[i].bill!));
 
       displayTabs.add(tC[i].billtabs!);
     }
@@ -503,103 +486,76 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     String billNumber = "11${shopDetail!.id}${date}${billCount}";
     String billID = GetBillID(BigInt.parse(billNumber));
 
-    // if (lBD!.lastBill == null) {
-    //   lBD!.lastBill = DateFormat.yMd().format(DateTime.now());
-    //   lBD!.lastBill = lBD!.lastBill!.replaceAll(new RegExp(r'[^\w\s]+'), '');
-    //   lBD!.iterator = '000001';
-
-    //   await localStoragebillDate.setItem('lastBillDate', lBD);
-
-    //   print(await localStoragebillDate.getItem('lastBillDate'));
-    // } else if (lBD!.lastBill != DateFormat.yMd().format(DateTime.now())) {
-    //   lBD!.lastBill = DateFormat.yMd().format(DateTime.now());
-    //   lBD!.lastBill != lBD!.lastBill!.replaceAll(new RegExp(r'[^\w\s]+'), '');
-
-    //   await localStoragebillDate.setItem('lastBillDate', lBD);
-    // } else {
-    //   temp = int.parse(lBD!.iterator as String);
-    //   temp++;
-
-    //   for (int i = 0; i < 6 - temp.toString().length; i++) {
-    //     tempIter = tempIter + '0';
-    //   }
-
-    //   tempIter = tempIter + temp.toString();
-    //   lBD!.iterator = tempIter;
-    //   await localStoragebillDate.setItem('lastBillDate', lBD);
-
-    //   print(await localStoragebillDate.getItem('lastBillDate'));
-    // }
-
-    // var billN = ('$shopID${lBD!.lastBill}${lBD!.iterator}');
-    // print(billN);
-
-    // var encoded = base64.encode([
-    //   int.parse(shopID),
-    //   int.parse(lBD!.lastBill!),
-    //   int.parse(lBD!.iterator!)
-    // ]);
-
-    // var hash = Uint8List.fromList([
-    //   int.parse(shopID),
-    //   int.parse(lBD!.lastBill!),
-    //   int.parse(lBD!.iterator!)
-    // ]);
-
-    // billNo = base62.encode(hash);
-
-    // for (var i = 0; i < tC[i].foundItems!.length; i++) {
-    //   if (count[i] != 0) {
-    //     tC[i].billedItems = List.from(tC[i].foundItems!);
-    //     billJson[i] = tC[i].billedItems![i].toJson();
-    //     totalCost += tC[i].billedItems![i].rate * count[i];
-    //   }
-    // }
-    List<String> items = [];
+    List<BillItem> items = [];
     TabClass curTab = tC[currentTabIndex];
 
     for (int i = 0; i < curTab.count!.length; i++) {
       if (curTab.count![i] != 0) {
-        items.add("${curTab.allItems![i].id}_${curTab.count![i]}");
+        items.add(new BillItem(
+            item: curTab.allItems![i],
+            quantity: curTab.count![i].toDouble(),
+            totalAmount:
+                curTab.allItems![i].rate * curTab.count![i].toDouble()));
       }
     }
 
-    // for (int i = 0; i < tC.length; i++) {
-    //   tC[i].totalCost = 0;
-    //   tC[i].billJson!.add({});
-    //   for (int j = 0; j < tC[i].foundItems!.length; j++) {
-    //     if (tC[j].count![i] != 0) {
-    //       tC[j].billedItems = List.from(tC[i].foundItems!);
-    //       billJson[i] = tC[j].billedItems![i].toJson();
-    //       totalCost += tC[j].billedItems![i].rate * tC[j].count![i];
-    //     }
-    //   }
-    // }
+    double totalCost = 0;
+    for (var i in items) {
+      totalCost += i.totalAmount;
+    }
 
     Bill bill = Bill(
-      items: items,
-      billID: billID,
-      customerDetails: 'customerName_customerNumber',
-    );
+        billID: billID,
+        items: items,
+        paymentMode: "UPI",
+        dateTime: DateTime.now(),
+        totalAmount: totalCost,
+        customerName: "customerName",
+        customerNumber: "customerNumber",
+        customerAddress: "customerAddress",
+        customerGSTN: "customerGSTN");
 
     //print(bill.totalCost);
 
-    String billStr = bill.toJson().toString();
-    print("Bill : " + billStr);
+    var billJSON = bill.toJson(); //bill.toJson().toString();
+    print("Bill : " + billJSON.toString());
     final docuser = FirebaseFirestore.instance
         .collection('transactions')
         .doc('category')
         .collection('pincode')
         .doc('shopid')
         .collection('bills')
-        .doc('day2');
+        .doc('offlineBills')
+        .collection("day2")
+        .doc("part1");
 
     List<dynamic> billArr = [];
-    billArr.add(billStr);
+    billArr.add(billJSON);
 
     // Store it in local storage
+    await docuser.set({'bills': FieldValue.arrayUnion(billArr)}, SetOptions(merge: true));
 
-    await docuser.update({'bills': FieldValue.arrayUnion(billArr)});
+    setState(() {
+      tC[currentTabIndex].bill = bill;
+      tC[currentTabIndex].showPaymentView = true;
+    });
+  }
+
+  Widget PaymentView(Bill bill) {
+    return Column(
+      children: [
+        QrImage(
+            size: 320,
+            data:
+                "upi://pay?pa=${shopDetail!.upiVPA}&pn=${shopDetail!.name}&am=${bill.totalAmount}&cu=INR&tr=${bill.billID}&tn=Paying for order : ${bill.billID}"),
+
+        ElevatedButton(onPressed: () {
+          setState(() {
+            tC[currentTabIndex].showPaymentView = false;
+          });
+        }, child: Text("Back"))
+      ],
+    );
   }
 
   String GetBillID(BigInt n) {

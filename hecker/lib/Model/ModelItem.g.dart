@@ -15,7 +15,6 @@ ModelItem _$ModelItemFromJson(Map<String, dynamic> json) => ModelItem(
       rate: json['rate'] as int,
       taxes: json['taxes'] as int? ?? 0,
       expDate: json['expDate'] as String,
-      itemPrice: json['itemPrice'] as int,
       total: json['total'] as int,
     );
 
@@ -28,6 +27,5 @@ Map<String, dynamic> _$ModelItemToJson(ModelItem instance) => <String, dynamic>{
       'rate': instance.rate,
       'taxes': instance.taxes,
       'expDate': instance.expDate,
-      'itemPrice': instance.itemPrice,
       'total': instance.total,
     };

@@ -7,13 +7,27 @@ part of 'Bill.dart';
 // **************************************************************************
 
 Bill _$BillFromJson(Map<String, dynamic> json) => Bill(
-      items: (json['items'] as List<dynamic>).map((e) => e as String).toList(),
       billID: json['billID'] as String,
-      customerDetails: json['customerDetails'] as String,
+      items: (json['items'] as List<dynamic>)
+          .map((e) => BillItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      paymentMode: json['paymentMode'] as String,
+      dateTime: DateTime.parse(json['dateTime'] as String),
+      totalAmount: (json['totalAmount'] as num).toDouble(),
+      customerName: json['customerName'] as String,
+      customerNumber: json['customerNumber'] as String,
+      customerAddress: json['customerAddress'] as String,
+      customerGSTN: json['customerGSTN'] as String,
     );
 
 Map<String, dynamic> _$BillToJson(Bill instance) => <String, dynamic>{
-      'items': instance.items,
       'billID': instance.billID,
-      'customerDetails': instance.customerDetails,
+      'items': instance.items.map((e) => e.toJson()).toList(),
+      'paymentMode': instance.paymentMode,
+      'dateTime': instance.dateTime.toIso8601String(),
+      'totalAmount': instance.totalAmount,
+      'customerName': instance.customerName,
+      'customerNumber': instance.customerNumber,
+      'customerAddress': instance.customerAddress,
+      'customerGSTN': instance.customerGSTN,
     };

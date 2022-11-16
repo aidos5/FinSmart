@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hecker/Model/BillItem.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'ModelItem.dart';
 
@@ -6,14 +7,30 @@ part 'Bill.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Bill {
-  List<String> items = [];
   String billID;
-  String customerDetails;
+
+  List<BillItem> items = [];
+
+  String paymentMode;
+  DateTime dateTime;
+  
+  double totalAmount;
+
+  String customerName;
+  String customerNumber;
+  String customerAddress;
+  String customerGSTN;
 
   Bill({
-    required this.items,
     required this.billID,
-    required this.customerDetails,
+    required this.items,
+    required this.paymentMode,
+    required this.dateTime,
+    required this.totalAmount,
+    required this.customerName,
+    required this.customerNumber,
+    required this.customerAddress,
+    required this.customerGSTN,
   });
 
   /// factory.
