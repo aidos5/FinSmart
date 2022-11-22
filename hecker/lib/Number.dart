@@ -87,89 +87,88 @@ class _NumberState extends State<Number> {
               ),
               SizedBox(
                 height: screenheight / 15,
-                child: MaterialButton(
-                  color: Colors.redAccent,
-                  onPressed: () {
-                    if (mobileNumber.text.length == 10) {
-                      //print("successful");
-                      // Navigator.of(context).pushAndRemoveUntil(
-                      //     MaterialPageRoute(builder: (context) => OTP()),
-                      //     (route) => false);
+                child: SizedBox(
+                  width: screenwidth / 3,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (mobileNumber.text.length == 10) {
+                        //print("successful");
+                        // Navigator.of(context).pushAndRemoveUntil(
+                        //     MaterialPageRoute(builder: (context) => OTP()),
+                        //     (route) => false);
 
-                      showDialog<String>(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          actionsAlignment: MainAxisAlignment.center,
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Would you like to confirm'),
-                              Text(
-                                '${mobileNumber.text}',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                        showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            actionsAlignment: MainAxisAlignment.center,
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('Would you like to confirm'),
+                                Text(
+                                  '${mobileNumber.text}',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text('as your Number??'),
+                              ],
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(
+                                    context,
+                                  );
+                                },
+                                child: const Text('NO'),
                               ),
-                              Text('as your Number??'),
+                              TextButton(
+                                onPressed: () async {
+                                  // Set User Cred
+                                  userCred!.phoneNo = mobileNumber.text;
+
+                                  // Store data in local storage
+                                  await localStorage.setItem('user', userCred);
+
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) => OTP.withPh(
+                                                phoneNo: mobileNumber.text,
+                                              )),
+                                      (route) => false);
+                                },
+                                child: const Text('YES'),
+                              ),
                             ],
                           ),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(
-                                  context,
-                                );
-                              },
-                              child: const Text('NO'),
+                        );
+                        const Text('Show Dialog');
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          behavior: SnackBarBehavior.floating,
+                          duration: Duration(seconds: 2),
+                          content: Container(
+                            padding: const EdgeInsets.all(8),
+                            height: screenheight / 15,
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                             ),
-                            TextButton(
-                              onPressed: () async {
-                                // Set User Cred
-                                userCred!.phoneNo = mobileNumber.text;
-
-                                // Store data in local storage
-                                await localStorage.setItem('user', userCred);
-
-                                Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) => OTP.withPh(
-                                              phoneNo: mobileNumber.text,
-                                            )),
-                                    (route) => false);
-                              },
-                              child: const Text('YES'),
-                            ),
-                          ],
-                        ),
-                      );
-                      const Text('Show Dialog');
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        behavior: SnackBarBehavior.floating,
-                        duration: Duration(seconds: 2),
-                        content: Container(
-                          padding: const EdgeInsets.all(8),
-                          height: screenheight / 15,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'Please enter correct Phone Number',
-                              style: TextStyle(fontSize: 15),
+                            child: const Center(
+                              child: Text(
+                                'Please enter correct Phone Number',
+                                style: TextStyle(fontSize: 15),
+                              ),
                             ),
                           ),
-                        ),
-                      ));
-                    }
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50.0),
+                        ));
+                      }
+                    },
+                    child: Text("Submit"),
                   ),
-                  textColor: Colors.white,
-                  child: Text("Submit"),
                 ),
               )
             ],

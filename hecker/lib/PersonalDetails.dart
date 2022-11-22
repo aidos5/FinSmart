@@ -3,8 +3,11 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:hecker/Model/UserCredential.dart';
 import 'package:hecker/ShopDetails.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 import 'package:localstorage/localstorage.dart';
+
+import 'UI/Colors.dart';
 
 class PersonalDetails extends StatefulWidget {
   PersonalDetails({Key? key}) : super(key: key);
@@ -15,7 +18,7 @@ class PersonalDetails extends StatefulWidget {
 
 class _PersonalDetailsState extends State<PersonalDetails> {
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
-  List<String> Genders = ['Select Gender', 'Male', 'Female', 'I am Gay'];
+  List<String> Genders = ['Select Gender', 'Male', 'Female'];
   String? selectedGender = 'Select Gender';
   DateTime? dob = DateTime.now();
   DateTime? newDate;
@@ -67,35 +70,41 @@ class _PersonalDetailsState extends State<PersonalDetails> {
               Form(
                 key: formkey,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                child: ListView(
-                  shrinkWrap: true,
+                child: Column(
                   children: [
-                    TextFormField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                          labelText: 'Your Name', border: OutlineInputBorder()),
-                      validator: (value) {
-                        if (value != null && value.isEmpty) {
-                          return 'Enter Your Name';
-                        } else {
-                          return null;
-                        }
-                      },
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                            labelText: 'Your Name',
+                            border: OutlineInputBorder()),
+                        validator: (value) {
+                          if (value != null && value.isEmpty) {
+                            return 'Enter Your Name';
+                          } else {
+                            return null;
+                          }
+                        },
+                      ),
                     ),
-                    TextFormField(
-                      keyboardType: TextInputType.multiline,
-                      maxLines: 5,
-                      controller: addressController,
-                      decoration: const InputDecoration(
-                          labelText: 'Your Address',
-                          border: OutlineInputBorder()),
-                      validator: (value) {
-                        if (value != null && value.isEmpty) {
-                          return 'Enter Your Address';
-                        } else {
-                          return null;
-                        }
-                      },
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 5,
+                        controller: addressController,
+                        decoration: const InputDecoration(
+                            labelText: 'Your Address',
+                            border: OutlineInputBorder()),
+                        validator: (value) {
+                          if (value != null && value.isEmpty) {
+                            return 'Enter Your Address';
+                          } else {
+                            return null;
+                          }
+                        },
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(
@@ -141,6 +150,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                               width: 10,
                             ),
                             MaterialButton(
+                              color: HexColor('#ffe8d7'),
                               onPressed: () async {
                                 newDate = await showDatePicker(
                                     context: context,
@@ -154,9 +164,15 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                                   setState(() => dob = newDate);
                                 }
                               },
-                              child: Text('${dob!.day}/'
-                                  '${dob!.month}/'
-                                  '${dob!.year}'),
+                              child: Text(
+                                '${dob!.day}/'
+                                '${dob!.month}/'
+                                '${dob!.year}',
+                                style: TextStyle(
+                                  color: AppColors.darkText,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             )
                           ],
                         ),
@@ -170,62 +186,56 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                             isOwner = value;
                           });
                         }),
-                    SizedBox(
-                      height: screenheight / 15,
-                      child: MaterialButton(
-                        color: Colors.redAccent,
-                        onPressed: () async {
-                          if (formkey.currentState!.validate()) {
-                            //print("successful");
-
-                            // Set basic details
-                            userCred!.name = nameController.text;
-                            userCred!.gender = selectedGender!;
-                            userCred!.dob =
-                                '${dob!.day}/${dob!.month}/${dob!.year}';
-                            userCred!.regDate = DateTime.now().toString();
-                            userCred!.isOwner = isOwner;
-                            userCred!.address = addressController.text;
-
-                            // If owner set shop id
-                            if (isOwner!) {
-                              String? id =
-                                  (int.tryParse(userCred!.phoneNo!)! * 37)
-                                      .toString();
-
-                              int iterCount = 12 - id.length;
-                              for (int i = 0; i < iterCount; i++) {
-                                id = "0" + id!;
-                              }
-
-                              userCred!.shopID = id!;
-                            }
-
-                            // Store User Creds
-                            await localStorage.setItem('user', userCred);
-
-                            print(await localStorage.getItem('user'));
-
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => ShopDetails()),
-                                (route) => false);
-
-                            return;
-                          } else {
-                            print("UnSuccessfull");
-                          }
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),
-                        textColor: Colors.white,
-                        child: Text("Submit"),
-                      ),
-                    )
                   ],
                 ),
               ),
+              SizedBox(
+                height: screenheight / 15,
+                width: screenwidth / 3,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (formkey.currentState!.validate()) {
+                      //print("successful");
+
+                      // Set basic details
+                      userCred!.name = nameController.text;
+                      userCred!.gender = selectedGender!;
+                      userCred!.dob = '${dob!.day}/${dob!.month}/${dob!.year}';
+                      userCred!.regDate = DateTime.now().toString();
+                      userCred!.isOwner = isOwner;
+                      userCred!.address = addressController.text;
+
+                      // If owner set shop id
+                      if (isOwner!) {
+                        String? id =
+                            (int.tryParse(userCred!.phoneNo)! * 37).toString();
+
+                        int iterCount = 12 - id.length;
+                        for (int i = 0; i < iterCount; i++) {
+                          id = "0" + id!;
+                        }
+
+                        userCred!.shopID = id!;
+                      }
+
+                      // Store User Creds
+                      await localStorage.setItem('user', userCred);
+
+                      print(await localStorage.getItem('user'));
+
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => ShopDetails()),
+                          (route) => false);
+
+                      return;
+                    } else {
+                      print("UnSuccessfull");
+                    }
+                  },
+                  child: Text("Submit"),
+                ),
+              )
             ],
           ),
         ),

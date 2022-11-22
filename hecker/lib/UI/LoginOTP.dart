@@ -52,9 +52,8 @@ class _LoginOTPState extends State<LoginOTP> {
       appBar: AppBar(title: Text('FinSmart')),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Container(
+        child: SizedBox(
           width: screenwidth,
-          height: screenheight,
           child: Column(children: [
             Padding(
               padding: const EdgeInsets.only(top: 18),

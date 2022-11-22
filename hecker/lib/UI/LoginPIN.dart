@@ -7,6 +7,7 @@ import 'package:localstorage/localstorage.dart';
 import 'package:pinput/pinput.dart';
 
 import '../Model/UserCredential.dart';
+import 'Colors.dart';
 
 class LoginPIN extends StatefulWidget {
   LoginPIN({Key? key}) : super(key: key);
@@ -68,54 +69,66 @@ class _LoginPINState extends State<LoginPIN> {
               ListView(
                 shrinkWrap: true,
                 children: [
-                  Text("Enter PIN"),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 8, 8, 8),
+                    child: Text(
+                      "Enter PIN",
+                      style: TextStyle(
+                        color: AppColors.darkText,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17.5,
+                      ),
+                    ),
+                  ),
                   Pinput(
                     length: 6,
                     obscureText: true,
                     controller: pinControlleer,
                   ),
-                  SizedBox(
-                    height: screenheight / 15,
-                    child: MaterialButton(
-                      color: Colors.redAccent,
-                      onPressed: () async {
-                        if (DBCrypt().checkpw(
-                            pinControlleer.text, userCred!.passHash!)) {
-                          // Login
-                          print("right pin");
-
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => MainPage()),
-                              (route) => false);
-                        } else {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("Error"),
-                                  content: Text(
-                                      "Seems like pin you entered is wrong!"),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("OK"))
-                                  ],
-                                );
-                              });
-                        }
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50.0),
-                      ),
-                      textColor: Colors.white,
-                      child: Text("Login"),
-                    ),
-                  )
                 ],
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 20, 8, 8),
+                child: SizedBox(
+                  height: screenheight / 15,
+                  width: screenwidth / 3,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (DBCrypt()
+                          .checkpw(pinControlleer.text, userCred!.passHash!)) {
+                        // Login
+                        print("right pin");
+
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => MainPage()),
+                            (route) => false);
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Error"),
+                              content:
+                                  Text("Seems like pin you entered is wrong!"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("OK"))
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: Text(
+                      "Login",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),

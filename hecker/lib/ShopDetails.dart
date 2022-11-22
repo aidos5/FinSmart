@@ -56,22 +56,19 @@ class _ShopDetailsState extends State<ShopDetails> {
       appBar: AppBar(title: Text('FinSmart')),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        
-        child: Container(
-          width: screenwidth,
-          height: screenheight,
-          child: Column(
-            children: [
-              const Text(
-                'Enter Shop Details',
-                style: TextStyle(fontSize: 37),
-              ),
-              Form(
-                key: formkey,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                child: Expanded(
-                  child: ListView(
-                    shrinkWrap: true,
+        child: Expanded(
+          child: SizedBox(
+            width: screenwidth,
+            child: Column(
+              children: [
+                const Text(
+                  'Enter Shop Details',
+                  style: TextStyle(fontSize: 37),
+                ),
+                Form(
+                  key: formkey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -205,47 +202,47 @@ class _ShopDetailsState extends State<ShopDetails> {
                           },
                         ),
                       ),
-                      SizedBox(
-                        height: screenheight / 15,
-                        child: MaterialButton(
-                          color: Colors.redAccent,
-                          onPressed: () async {
-                            if (formkey.currentState!.validate()) {
-                              shopDetail!.name = nameCont.text;
-                              shopDetail!.address = addrCont.text;
-                              shopDetail!.pincode = pincodeCont.text;
-                              shopDetail!.contactNumber = numberCont.text;
-                              shopDetail!.contactMail = mailCont.text;
-                              shopDetail!.gstn = gstnCont.text;
-                              shopDetail!.categoryCode = selectedCategory;
-                
-                              await localStorage.setItem('shop', shopDetail);
-                
-                              print(await localStorage.getItem('shop'));
-                
-                              //print("successful");
-                              Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (context) => AccountDone()),
-                                  (route) => false);
-                
-                              return;
-                            } else {
-                              print("UnSuccessfull");
-                            }
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                          ),
-                          textColor: Colors.white,
-                          child: Text("Submit"),
-                        ),
-                      )
                     ],
                   ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
+                  child: SizedBox(
+                    height: screenheight / 15,
+                    width: screenwidth / 3,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (formkey.currentState!.validate()) {
+                          shopDetail!.name = nameCont.text;
+                          shopDetail!.address = addrCont.text;
+                          shopDetail!.pincode = pincodeCont.text;
+                          shopDetail!.contactNumber = numberCont.text;
+                          shopDetail!.contactMail = mailCont.text;
+                          shopDetail!.gstn = gstnCont.text;
+                          shopDetail!.categoryCode = selectedCategory;
+
+                          await localStorage.setItem('shop', shopDetail);
+
+                          print(await localStorage.getItem('shop'));
+
+                          //print("successful");
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => AccountDone()),
+                              (route) => false);
+
+                          return;
+                        } else {
+                          print("UnSuccessfull");
+                        }
+                      },
+                      child: Text("Submit"),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

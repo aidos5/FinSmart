@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hecker/UI/Colors.dart';
+import 'package:hecker/UI/app_fonts.dart';
 import 'PersonalDetails.dart';
 import 'Model/UserCredential.dart';
 import 'package:localstorage/localstorage.dart';
@@ -48,14 +50,18 @@ class _PasswordState extends State<Password> {
       appBar: AppBar(title: Text('FinSmart')),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Container(
+        child: SizedBox(
           width: screenwidth,
           height: screenheight,
           child: Column(
             children: [
               const Text(
                 'Set Password',
-                style: TextStyle(fontSize: 37),
+                style: TextStyle(
+                    color: AppColors.darkText,
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: AppFonts.gilroy),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -70,7 +76,17 @@ class _PasswordState extends State<Password> {
                 child: ListView(
                   shrinkWrap: true,
                   children: [
-                    Text("Enter PIN"),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(20, 8, 8, 8),
+                      child: Text(
+                        "Enter PIN",
+                        style: TextStyle(
+                          color: AppColors.darkText,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17.5,
+                        ),
+                      ),
+                    ),
                     Pinput(
                       length: 6,
                       obscureText: true,
@@ -78,7 +94,17 @@ class _PasswordState extends State<Password> {
                         password.text = value;
                       },
                     ),
-                    Text("Confirm PIN"),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(20, 8, 8, 8),
+                      child: Text(
+                        "Confirm PIN",
+                        style: TextStyle(
+                          color: AppColors.darkText,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17.5,
+                        ),
+                      ),
+                    ),
                     Pinput(
                       length: 6,
                       obscureText: true,
@@ -86,83 +112,43 @@ class _PasswordState extends State<Password> {
                         confirmpassword.text = value;
                       },
                     ),
-
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8),
-                    //   child: TextFormField(
-                    //     controller: password,
-                    //     decoration: const InputDecoration(
-                    //         labelText: 'Set Password',
-                    //         border: OutlineInputBorder()),
-                    //     keyboardType: TextInputType.text,
-                    //     validator: (value) {
-                    //       if (value!.isEmpty) {
-                    //         return 'Please a Enter Password';
-                    //       }
-                    //       return null;
-                    //     },
-                    //   ),
-                    // ),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8.0),
-                    //   child: TextFormField(
-                    //     controller: confirmpassword,
-                    //     decoration: const InputDecoration(
-                    //         labelText: 'Confirm Password',
-                    //         border: OutlineInputBorder()),
-                    //     obscureText: true,
-                    //     keyboardType: TextInputType.text,
-                    //     validator: (value) {
-                    //       if (value!.isEmpty) {
-                    //         return 'Please re-enter password';
-                    //       }
-
-                    //       if (password.text != confirmpassword.text) {
-                    //         return "Password does not match";
-                    //       }
-
-                    //       return null;
-                    //     },
-                    //   ),
-                    // ),
-                    SizedBox(
-                      height: screenheight / 15,
-                      child: MaterialButton(
-                        color: Colors.redAccent,
-                        onPressed: () async {
-                          if (password.text == confirmpassword.text) {
-                            var passHash = new DBCrypt()
-                                .hashpw(password.text, new DBCrypt().gensalt());
-
-                            print(passHash);
-
-                            userCred!.passHash = passHash;
-
-                            await localStorage.setItem('user', userCred);
-
-                            print(await localStorage.getItem('user'));
-
-                            //print("successful");
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => PersonalDetails()),
-                                (route) => false);
-
-                            return;
-                          } else {
-                            print("UnSuccessfull");
-                          }
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),
-                        textColor: Colors.white,
-                        child: Text("Submit"),
-                      ),
-                    )
                   ],
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 20, 8, 8),
+                child: SizedBox(
+                  height: screenheight / 15,
+                  width: screenwidth / 3,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (password.text == confirmpassword.text) {
+                        var passHash = new DBCrypt()
+                            .hashpw(password.text, new DBCrypt().gensalt());
+
+                        print(passHash);
+
+                        userCred!.passHash = passHash;
+
+                        await localStorage.setItem('user', userCred);
+
+                        print(await localStorage.getItem('user'));
+
+                        //print("successful");
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) => PersonalDetails()),
+                            (route) => false);
+
+                        return;
+                      } else {
+                        print("UnSuccessfull");
+                      }
+                    },
+                    child: Text("Submit"),
+                  ),
+                ),
+              )
             ],
           ),
         ),
