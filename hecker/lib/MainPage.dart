@@ -12,6 +12,7 @@ import 'package:hecker/Model/TabClass.dart';
 import 'package:hecker/Navigation.dart';
 import 'package:hecker/Number.dart';
 import 'package:hecker/Payments.dart';
+import 'package:hecker/UI/Colors.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -150,10 +151,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             appBar: AppBar(
               title: Text("Finsmart"),
             ),
-            body: Center(child: Text("Loading...")),
+            body: Center(
+              child: Text("Loading..."),
+            ),
           )
         : Scaffold(
-            floatingActionButton: (tC[currentTabIndex].count!.sum > 0 && tC[currentTabIndex].showPaymentView! != true)
+            floatingActionButton: (tC[currentTabIndex].count!.sum > 0 &&
+                    tC[currentTabIndex].showPaymentView! != true)
                 ? SizedBox(
                     width: 100,
                     child: FloatingActionButton(
@@ -176,7 +180,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 'FinSmart',
                 style: TextStyle(fontSize: 37),
               ),
-              backgroundColor: HexColor('#4cbfa6'),
               bottom: TabBar(
                 tabs: allTabs(),
                 isScrollable: true,
@@ -193,7 +196,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         Tab(
           child: Text(
             '$i',
-            style: TextStyle(fontSize: 25),
+            style: TextStyle(fontSize: 25, color: AppColors.darkText),
           ),
         ),
       );
@@ -230,78 +233,91 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Widget TabView(int i, double screenWidth) {
-    return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-      TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.search),
-          hintText: 'Search Item',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: BorderSide(color: Colors.blueAccent),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search),
+              hintText: 'Search Item',
+            ),
+            onChanged: searchItems,
           ),
         ),
-        onChanged: searchItems,
-      ),
-      SizedBox(
-        width: screenWidth,
-        child: Column(
-          children: [
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: firstopen == true
-                  ? allItems.length
-                  : tC[i].foundItems!.length,
-              itemBuilder: (context, index) => cardmaker(index, i),
-              physics: AlwaysScrollableScrollPhysics(),
-            ),
-          ],
+        SizedBox(
+          width: screenWidth,
+          child: Column(
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: firstopen == true
+                    ? allItems.length
+                    : tC[i].foundItems!.length,
+                itemBuilder: (context, index) => cardmaker(index, i),
+                physics: AlwaysScrollableScrollPhysics(),
+              ),
+            ],
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   Card cardmaker(int index, int i) {
+    final screenwidth = MediaQuery.of(context).size.width;
+
+    List<Color> cardColor = [
+      AppColors.blueCard,
+      AppColors.pinkCard,
+      AppColors.orangeCard
+    ];
+    // Color appliedColor = cardColor[Random().nextInt(3)];
     return firstopen == false
         ? Card(
+            color: cardColor[index],
             child: Column(
               children: [
                 Row(
                   children: [
-                    Text(
-                      'Name : ',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    Text(
-                      '${tC[i].foundItems![index].name}',
-                      style: TextStyle(fontSize: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Name : ${tC[i].foundItems![index].name}',
+                        style: TextStyle(
+                            color: AppColors.black.withOpacity(0.8),
+                            fontSize: 20,
+                            fontWeight: FontWeight.normal),
+                      ),
                     ),
                     SizedBox(
-                      width: 25,
+                      width: screenwidth / 5,
                     ),
-                    Text(
-                      'Quantity left: ',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    Text(
-                      '${tC[i].foundItems![index].quantity} ',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    Text(
-                      '${tC[i].foundItems![index].unit}',
-                      style: TextStyle(fontSize: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Quantity left: ${tC[i].foundItems![index].quantity} ${tC[i].foundItems![index].unit}',
+                        style: TextStyle(
+                            color: AppColors.black.withOpacity(0.8),
+                            fontSize: 20,
+                            fontWeight: FontWeight.normal),
+                      ),
                     ),
                   ],
                 ),
                 Row(
                   children: [
-                    Text(
-                      'Selling Price : ',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    Text(
-                      '${tC[i].foundItems![index].rate}',
-                      style: TextStyle(fontSize: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Selling Price : ${tC[i].foundItems![index].rate}',
+                        style: TextStyle(
+                            color: AppColors.black.withOpacity(0.8),
+                            fontSize: 20,
+                            fontWeight: FontWeight.normal),
+                      ),
                     ),
                   ],
                 ),
@@ -310,44 +326,38 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
           )
         : Card(
+            color: cardColor[index],
             child: Column(
               children: [
                 Row(
                   children: [
                     Text(
-                      'Name : ',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    Text(
-                      '${allItems[index].name}',
-                      style: TextStyle(fontSize: 20),
+                      'Name : ${allItems[index].name}',
+                      style: TextStyle(
+                          color: AppColors.black.withOpacity(0.8),
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal),
                     ),
                     SizedBox(
                       width: 25,
                     ),
                     Text(
-                      'Quantity left: ',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    Text(
-                      '${allItems[index].quantity} ',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    Text(
-                      '${allItems[index].unit}',
-                      style: TextStyle(fontSize: 20),
+                      'Quantity left: ${allItems[index].quantity} ${allItems[index].unit}',
+                      style: TextStyle(
+                          color: AppColors.black.withOpacity(0.8),
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal),
                     ),
                   ],
                 ),
                 Row(
                   children: [
                     Text(
-                      'Selling Price : ',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    Text(
-                      '${allItems[index].rate}',
-                      style: TextStyle(fontSize: 20),
+                      'Selling Price : ${allItems[index].rate}',
+                      style: TextStyle(
+                          color: AppColors.black.withOpacity(0.8),
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal),
                     ),
                   ],
                 ),
@@ -360,14 +370,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   Widget quantityField(int index, int i) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
+      children: [
         Container(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-          decoration: BoxDecoration(
-              color: Color.fromARGB(255, 192, 178, 178),
-              borderRadius: BorderRadius.circular(10)),
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
           child: Row(
-            children: <Widget>[
+            children:[
               IconButton(
                 icon: const Icon(Icons.remove),
                 onPressed: () {
@@ -417,6 +425,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               SizedBox(
                 width: 60,
                 child: TextField(
+                  
                   //initialValue: '${count[index]}',
                   onChanged: (value) {
                     if (value.isNotEmpty)
@@ -533,7 +542,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     billArr.add(billJSON);
 
     // Store it in local storage
-    await docuser.set({'bills': FieldValue.arrayUnion(billArr)}, SetOptions(merge: true));
+    await docuser.set(
+        {'bills': FieldValue.arrayUnion(billArr)}, SetOptions(merge: true));
 
     setState(() {
       tC[currentTabIndex].bill = bill;
@@ -548,12 +558,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             size: 320,
             data:
                 "upi://pay?pa=${shopDetail!.upiVPA}&pn=${shopDetail!.name}&am=${bill.totalAmount}&cu=INR&tr=${bill.billID}&tn=Paying for order : ${bill.billID}"),
-
-        ElevatedButton(onPressed: () {
-          setState(() {
-            tC[currentTabIndex].showPaymentView = false;
-          });
-        }, child: Text("Back"))
+        ElevatedButton(
+            onPressed: () {
+              setState(() {
+                tC[currentTabIndex].showPaymentView = false;
+              });
+            },
+            child: Text("Back"))
       ],
     );
   }

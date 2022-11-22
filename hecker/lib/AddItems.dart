@@ -66,7 +66,7 @@ class _AddItemsState extends State<AddItems> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         centerTitle: true,
-        actions: <Widget>[
+        actions: [
           IconButton(
             icon: Icon(
               Icons.qr_code_scanner,
@@ -95,108 +95,114 @@ class _AddItemsState extends State<AddItems> {
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: SizedBox(
           width: screenwidth,
-          child: Column(
-            children: [
-              Text(
-                scanResult == null
-                    ? 'No Serial Number'
-                    : 'Serial Number : $scanResult',
-                style: TextStyle(fontSize: 25),
-                textAlign: TextAlign.center,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Item Name',
-                    border: OutlineInputBorder(),
+          child: Expanded(
+            child: Column(
+              children: [
+                Text(
+                  scanResult == null
+                      ? 'No Serial Number'
+                      : 'Serial Number : $scanResult',
+                  style: TextStyle(fontSize: 25),
+                  textAlign: TextAlign.center,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Item Name',
+                      border: OutlineInputBorder(),
+                    ),
+                    controller: itemName,
                   ),
-                  controller: itemName,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'Item Description',
-                      border: OutlineInputBorder()),
-                  controller: itemDescription,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                        labelText: 'Item Description',
+                        border: OutlineInputBorder()),
+                    controller: itemDescription,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'Selling Price', border: OutlineInputBorder()),
-                  controller: rate,
-                  keyboardType: TextInputType.number,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                        labelText: 'Selling Price',
+                        border: OutlineInputBorder()),
+                    controller: rate,
+                    keyboardType: TextInputType.number,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'Quantity', border: OutlineInputBorder()),
-                  controller: quantity,
-                  keyboardType: TextInputType.number,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                        labelText: 'Quantity', border: OutlineInputBorder()),
+                    controller: quantity,
+                    keyboardType: TextInputType.number,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'Taxes', border: OutlineInputBorder()),
-                  controller: taxes,
-                  keyboardType: TextInputType.number,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                        labelText: 'Taxes', border: OutlineInputBorder()),
+                    controller: taxes,
+                    keyboardType: TextInputType.number,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Text(
-                      'Enter Expiry date: ',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    SizedBox(
-                      width: screenwidth / 4.5,
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        newDate = await showDatePicker(
-                            context: context,
-                            initialDate: dateTime!,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2200));
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Enter Expiry date: ',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(
+                        width: screenwidth / 4.5,
+                      ),
+                      SizedBox(
+                        width: screenwidth / 4,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            newDate = await showDatePicker(
+                                context: context,
+                                initialDate: dateTime!,
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2200));
 
-                        if (newDate == null) {
-                          newDate = dateTime;
-                        }
+                            if (newDate == null) {
+                              newDate = dateTime;
+                            }
 
-                        setState(() => dateTime = newDate);
-                      },
-                      child: Text('${dateTime!.day}/' +
-                          '${dateTime!.month}/' +
-                          '${dateTime!.year}'),
-                    )
-                  ],
+                            setState(() => dateTime = newDate);
+                          },
+                          child: Text('${dateTime!.day}/' +
+                              '${dateTime!.month}/' +
+                              '${dateTime!.year}'),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              MaterialButton(
-                onPressed: (() {
-                  SaveAll();
-                }),
-                child: Text('Save'),
-                color: Colors.red,
-              ),
-              MaterialButton(
-                onPressed: (() {
-                  localStorageItems.deleteItem('items');
-                }),
-                child: Text('Delete'),
-                color: Colors.red,
-              )
-            ],
+                MaterialButton(
+                  onPressed: (() {
+                    SaveAll();
+                  }),
+                  child: Text('Save'),
+                  color: Colors.red,
+                ),
+                MaterialButton(
+                  onPressed: (() {
+                    localStorageItems.deleteItem('items');
+                  }),
+                  child: Text('Delete'),
+                  color: Colors.red,
+                )
+              ],
+            ),
           ),
         ),
       ),
