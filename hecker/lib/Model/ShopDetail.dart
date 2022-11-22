@@ -18,6 +18,8 @@ class ShopDetail {
   String? categoryCode;
   String? gstn;
 
+  String? upiVPA;
+
   ShopDetail();
 
   /// factory.

@@ -128,13 +128,13 @@ class _LoginOTPState extends State<LoginOTP> {
                             allItems.add(mi);
                           }
 
-                          print("yeah boi loaded items");
-
                           List<dynamic> allItemString = allItems
                               .map((e) => jsonEncode(e.toJson()))
                               .toList();
                           await localStorageItems.setItem(
                               'items', jsonEncode(allItemString));
+
+                          print("yeah boi loaded items");
                         });
 
                         print("You are logged in!\n" + value.toString());

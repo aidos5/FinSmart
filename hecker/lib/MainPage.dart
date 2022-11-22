@@ -7,11 +7,14 @@ import 'package:collection/collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hecker/Model/BillItem.dart';
 import 'package:hecker/Model/TabClass.dart';
 import 'package:hecker/Navigation.dart';
+import 'package:hecker/Number.dart';
 import 'package:hecker/Payments.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'Model/Bill.dart';
 import 'Model/ModelItem.dart';
 import 'package:localstorage/localstorage.dart';
@@ -35,7 +38,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int currentTabIndex = 0;
 
   final localStoragebillDate = LocalStorage('lastBillDate.json');
-  var storage = LocalStorage('shopDetail.json');
+  var localStorageShop = LocalStorage('shopDetail.json');
   var localStorageItems = LocalStorage('items.json');
 
   List<Widget> tabs = [];
@@ -47,7 +50,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   int totalCost = 0;
 
-  String shopID = '12345678910';
+  ShopDetail? shopDetail;
   var base62 = BaseXCodec(
       '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
@@ -82,6 +85,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Future LoadShopDetail() async {
+    var shopJSON = await localStorageShop.getItem('shop');
+    shopDetail = ShopDetail.fromJson((shopJSON as Map<String, dynamic>));
+  }
+
   Future LoadItems() async {
     // setState(() {
     //   for (int i = 0; i < maxBillCount; i++) {
@@ -104,38 +112,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     setState(() {
       for (int i = 0; i < maxBillCount; i++) {
         tC.add(TabClass());
+        tC[i].allItems = List.from(allItems);
         tC[i].foundItems = List.from(allItems);
         tC[i].quantityEditor = [];
         tC[i].count = [];
+        tC[i].showPaymentView = false;
         for (int j = 0; j < allItems.length; j++) {
           tC[i].quantityEditor!.add(new TextEditingController());
           tC[i].count!.add(0);
         }
       }
     });
-
-    // if (tC[i].foundItems.length < 1) {
-    //   print("lowde");
-    //   FirebaseFirestore.instance
-    //       .collection('transactions')
-    //       .doc('category')
-    //       .collection('pincode')
-    //       .doc('shopid')
-    //       .collection('items')
-    //       .snapshots()
-    //       .map((snapshot) => snapshot.docs
-    //           .map((doc) => ModelItem.fromJson(doc.data()))
-    //           .toList())
-    //       .listen((event) {
-    //     for (ModelItem mi in event) {
-    //       allItems.add(mi);
-    //     }
-
-    //     tC[i].foundItems = List.from(allItems);
-    //   });
-    // }
-
-    print("Lowde : " + tC.length.toString());
 
     isInit = true;
   }
@@ -166,17 +153,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             body: Center(child: Text("Loading...")),
           )
         : Scaffold(
-            floatingActionButton: tC[currentTabIndex].count!.sum > 0
+            floatingActionButton: (tC[currentTabIndex].count!.sum > 0 && tC[currentTabIndex].showPaymentView! != true)
                 ? SizedBox(
                     width: 100,
                     child: FloatingActionButton(
                       shape: BeveledRectangleBorder(),
                       onPressed: (() {
                         generateBill();
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => Payments()),
-                            (route) => false);
+                        // Navigator.of(context).pushAndRemoveUntil(
+                        //     MaterialPageRoute(builder: (context) => Payments()),
+                        //     (route) => false);
                       }),
                       child: Text('Checkout'),
                     ),
@@ -197,8 +183,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 controller: tabController,
               ),
             ),
-            body: TabBarView(
-                controller: tabController, children: BillView()));
+            body: TabBarView(controller: tabController, children: BillView()));
   }
 
   List<Widget> allTabs() {
@@ -234,44 +219,46 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       // });
 
       tC[i].billtabs = Tab(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: 'Search Item',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: Colors.blueAccent),
-                ),
-              ),
-              onChanged: searchItems,
-            ),
-            SizedBox(
-              width: screenwidth,
-              child: Column(
-                children: [
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: firstopen == true
-                        ? allItems.length
-                        : tC[i].foundItems!.length,
-                    itemBuilder: (context, index) => cardmaker(index, i),
-                    physics: AlwaysScrollableScrollPhysics(),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      );
+          child: tC[i].showPaymentView! == false
+              ? TabView(i, screenwidth)
+              : PaymentView(tC[i].bill!));
 
       displayTabs.add(tC[i].billtabs!);
     }
 
     return displayTabs;
+  }
+
+  Widget TabView(int i, double screenWidth) {
+    return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+      TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.search),
+          hintText: 'Search Item',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(color: Colors.blueAccent),
+          ),
+        ),
+        onChanged: searchItems,
+      ),
+      SizedBox(
+        width: screenWidth,
+        child: Column(
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: firstopen == true
+                  ? allItems.length
+                  : tC[i].foundItems!.length,
+              itemBuilder: (context, index) => cardmaker(index, i),
+              physics: AlwaysScrollableScrollPhysics(),
+            ),
+          ],
+        ),
+      ),
+    ]);
   }
 
   Card cardmaker(int index, int i) {
@@ -470,97 +457,122 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Future generateBill() async {
-    String tempIter = '';
-    int temp;
-    var bill;
+    var formatter = new DateFormat('ddMMyyyy');
+    String date = formatter.format(DateTime.now());
+    // String date =
+    //     DateFormat(DateTime.now()).toString().replaceAll(RegExp("/"), '');
 
-    if (lBD!.lastBill == null) {
-      lBD!.lastBill = DateFormat.yMd().format(DateTime.now());
-      lBD!.lastBill = lBD!.lastBill!.replaceAll(new RegExp(r'[^\w\s]+'), '');
-      lBD!.iterator = '000001';
-
-      await localStoragebillDate.setItem('lastBillDate', lBD);
-
-      print(await localStoragebillDate.getItem('lastBillDate'));
-    } else if (lBD!.lastBill != DateFormat.yMd().format(DateTime.now())) {
-      lBD!.lastBill = DateFormat.yMd().format(DateTime.now());
-      lBD!.lastBill != lBD!.lastBill!.replaceAll(new RegExp(r'[^\w\s]+'), '');
-
-      await localStoragebillDate.setItem('lastBillDate', lBD);
-    } else {
-      temp = int.parse(lBD!.iterator as String);
-      temp++;
-
-      for (int i = 0; i < 6 - temp.toString().length; i++) {
-        tempIter = tempIter + '0';
-      }
-
-      tempIter = tempIter + temp.toString();
-      lBD!.iterator = tempIter;
-      await localStoragebillDate.setItem('lastBillDate', lBD);
-
-      print(await localStoragebillDate.getItem('lastBillDate'));
+    if (shopDetail == null) {
+      // Show error
+      await LoadShopDetail();
     }
 
-    var billN = ('$shopID${lBD!.lastBill}${lBD!.iterator}');
-    print(billN);
+    String? lastBillDate = await localStoragebillDate.getItem('lastBilldate');
+    if (lastBillDate == null) {
+      await localStoragebillDate.setItem('lastBillDate', date);
+      lastBillDate = date;
+    }
 
-    var encoded = base64.encode([
-      int.parse(shopID),
-      int.parse(lBD!.lastBill!),
-      int.parse(lBD!.iterator!)
-    ]);
+    var billC = await localStoragebillDate.getItem('billCount');
+    if (billC == null || lastBillDate != date) {
+      await localStoragebillDate.setItem('billCount', '0');
+      billC = '0';
+    }
+    int billCount = int.parse(billC.toString());
+    billCount++;
+    await localStoragebillDate.setItem('billCount', billCount.toString());
 
-    var hash = Uint8List.fromList([
-      int.parse(shopID),
-      int.parse(lBD!.lastBill!),
-      int.parse(lBD!.iterator!)
-    ]);
+    //{payment mode}{shop id}{date}{bill count of that day}
+    String billNumber = "11${shopDetail!.id}${date}${billCount}";
+    String billID = GetBillID(BigInt.parse(billNumber));
 
-    billNo = base62.encode(hash);
+    List<BillItem> items = [];
+    TabClass curTab = tC[currentTabIndex];
 
-    // for (var i = 0; i < tC[i].foundItems!.length; i++) {
-    //   if (count[i] != 0) {
-    //     tC[i].billedItems = List.from(tC[i].foundItems!);
-    //     billJson[i] = tC[i].billedItems![i].toJson();
-    //     totalCost += tC[i].billedItems![i].rate * count[i];
-    //   }
-    // }
-    for (int i = 0; i < tC.length; i++) {
-      tC[i].totalCost = 0;
-      tC[i].billJson!.add({});
-      for (int j = 0; j < tC[i].foundItems!.length; j++) {
-        if (tC[j].count![i] != 0) {
-          tC[j].billedItems = List.from(tC[i].foundItems!);
-          billJson[i] = tC[j].billedItems![i].toJson();
-          totalCost += tC[j].billedItems![i].rate * tC[j].count![i];
-        }
+    for (int i = 0; i < curTab.count!.length; i++) {
+      if (curTab.count![i] != 0) {
+        items.add(new BillItem(
+            item: curTab.allItems![i],
+            quantity: curTab.count![i].toDouble(),
+            totalAmount:
+                curTab.allItems![i].rate * curTab.count![i].toDouble()));
       }
     }
 
-    bill = Bill(
-        shopName: 'shopName',
-        shopAddress: 'shopAddress',
-        GSTNumber: 'GSTNumber',
-        billJson: billJson,
-        totalCost: totalCost,
-        billNumber: billNo,
-        paymentMode: 'paymentMode',
-        customerName: 'customerName',
-        customerNumber: 'customerNumber');
+    double totalCost = 0;
+    for (var i in items) {
+      totalCost += i.totalAmount;
+    }
+
+    Bill bill = Bill(
+        billID: billID,
+        items: items,
+        paymentMode: "UPI",
+        dateTime: DateTime.now(),
+        totalAmount: totalCost,
+        customerName: "customerName",
+        customerNumber: "customerNumber",
+        customerAddress: "customerAddress",
+        customerGSTN: "customerGSTN");
 
     //print(bill.totalCost);
 
-    final doc = bill.toJson();
+    var billJSON = bill.toJson(); //bill.toJson().toString();
+    print("Bill : " + billJSON.toString());
     final docuser = FirebaseFirestore.instance
         .collection('transactions')
         .doc('category')
         .collection('pincode')
         .doc('shopid')
         .collection('bills')
-        .doc('day2');
+        .doc('offlineBills')
+        .collection("day2")
+        .doc("part1");
 
-    await docuser.set(doc);
+    List<dynamic> billArr = [];
+    billArr.add(billJSON);
+
+    // Store it in local storage
+    await docuser.set({'bills': FieldValue.arrayUnion(billArr)}, SetOptions(merge: true));
+
+    setState(() {
+      tC[currentTabIndex].bill = bill;
+      tC[currentTabIndex].showPaymentView = true;
+    });
+  }
+
+  Widget PaymentView(Bill bill) {
+    return Column(
+      children: [
+        QrImage(
+            size: 320,
+            data:
+                "upi://pay?pa=${shopDetail!.upiVPA}&pn=${shopDetail!.name}&am=${bill.totalAmount}&cu=INR&tr=${bill.billID}&tn=Paying for order : ${bill.billID}"),
+
+        ElevatedButton(onPressed: () {
+          setState(() {
+            tC[currentTabIndex].showPaymentView = false;
+          });
+        }, child: Text("Back"))
+      ],
+    );
+  }
+
+  String GetBillID(BigInt n) {
+    String characterSet =
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    BigInt zero = BigInt.from(0);
+    BigInt six2 = BigInt.from(62);
+    BigInt r;
+
+    String billID = "";
+    while (n > zero) {
+      r = n % six2;
+      n ~/= six2;
+      billID = characterSet[r.toInt()] + billID;
+    }
+
+    return billID;
   }
 
   void searchItems(String query) {

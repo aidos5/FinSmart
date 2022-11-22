@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'ModelItem.dart';
+import 'Bill.dart';
 
 class TabClass {
   List<int>? count = [];
   Tab? billtabs;
   List<TextEditingController>? quantityEditor = [];
+  List<ModelItem>? allItems;
   List<ModelItem>? foundItems;
   List<ModelItem>? billedItems;
   List<Map<String, dynamic>>? billJson;
   String? billNo;
   int? totalCost;
+  Bill? bill;
+
+  bool? showPaymentView = false;
 
   TabClass(
       {this.foundItems,
@@ -19,5 +24,7 @@ class TabClass {
       this.billNo,
       this.totalCost,
       this.count,
-      this.quantityEditor});
+      this.quantityEditor,
+      this.showPaymentView,
+      this.bill});
 }
