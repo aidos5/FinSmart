@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/Items.dart';
+import 'package:hecker/UI/Colors.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -70,7 +71,8 @@ class _AddItemsState extends State<AddItems> {
           IconButton(
             icon: Icon(
               Icons.qr_code_scanner,
-              color: Colors.white,
+              color: AppColors.black,
+              size: 40,
             ),
             onPressed: scanBarcode,
           )
@@ -83,7 +85,7 @@ class _AddItemsState extends State<AddItems> {
           }),
           child: Icon(
             Icons.arrow_back_sharp,
-            color: Colors.white,
+            color: AppColors.black,
           ),
         ),
         title: Text(
@@ -98,12 +100,15 @@ class _AddItemsState extends State<AddItems> {
           child: Expanded(
             child: Column(
               children: [
-                Text(
-                  scanResult == null
-                      ? 'No Serial Number'
-                      : 'Serial Number : $scanResult',
-                  style: TextStyle(fontSize: 25),
-                  textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    scanResult == null
+                        ? 'No Serial Number'
+                        : 'Serial Number : $scanResult',
+                    style: TextStyle(fontSize: 25),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -156,16 +161,22 @@ class _AddItemsState extends State<AddItems> {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      Text(
-                        'Enter Expiry date: ',
-                        style: TextStyle(fontSize: 20),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Enter Expiry date: ',
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
                       SizedBox(
                         width: screenwidth / 4.5,
                       ),
                       SizedBox(
-                        width: screenwidth / 4,
+                        width: screenwidth / 3.8,
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateColor.resolveWith(
+                                  (states) => AppColors.lightOrange)),
                           onPressed: () async {
                             newDate = await showDatePicker(
                                 context: context,
@@ -179,27 +190,49 @@ class _AddItemsState extends State<AddItems> {
 
                             setState(() => dateTime = newDate);
                           },
-                          child: Text('${dateTime!.day}/' +
-                              '${dateTime!.month}/' +
-                              '${dateTime!.year}'),
+                          child: Text(
+                            '${dateTime!.day}/' +
+                                '${dateTime!.month}/' +
+                                '${dateTime!.year}',
+                            style: TextStyle(
+                              color: AppColors.blackText,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       )
                     ],
                   ),
                 ),
-                MaterialButton(
-                  onPressed: (() {
-                    SaveAll();
-                  }),
-                  child: Text('Save'),
-                  color: Colors.red,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: screenwidth / 5,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateColor.resolveWith(
+                              (states) => AppColors.green)),
+                      onPressed: (() {
+                        SaveAll();
+                      }),
+                      child: Text('Save'),
+                    ),
+                  ),
                 ),
-                MaterialButton(
-                  onPressed: (() {
-                    localStorageItems.deleteItem('items');
-                  }),
-                  child: Text('Delete'),
-                  color: Colors.red,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: screenwidth / 5,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateColor.resolveWith(
+                              (states) => AppColors.red)),
+                      onPressed: (() {
+                        localStorageItems.deleteItem('items');
+                      }),
+                      child: Text('Delete'),
+                    ),
+                  ),
                 )
               ],
             ),

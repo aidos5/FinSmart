@@ -168,7 +168,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         //     MaterialPageRoute(builder: (context) => Payments()),
                         //     (route) => false);
                       }),
-                      child: Text('Checkout'),
+                      child: Text(
+                        'Checkout',
+                        style: TextStyle(fontSize: 15),
+                      ),
                     ),
                   )
                 : null,
@@ -368,6 +371,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Widget quantityField(int index, int i) {
+    final screenheight = MediaQuery.of(context).size.height;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -375,34 +379,39 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
           child: Row(
-            children:[
-              IconButton(
-                icon: const Icon(Icons.remove),
+            children: [
+              MaterialButton(
+                color: HexColor('#b2b2b2'),
+                shape: CircleBorder(),
+                child: const Icon(Icons.remove),
                 onPressed: () {
                   setState(
                     () {
                       if (tC[i].count![index] == 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: Colors.transparent,
-                          elevation: 0,
-                          behavior: SnackBarBehavior.floating,
-                          duration: Duration(seconds: 2),
-                          content: Container(
-                            padding: const EdgeInsets.all(8),
-                            height: 30,
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'No Negatives',
-                                style: TextStyle(fontSize: 15),
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 2),
+                            content: Container(
+                              padding: const EdgeInsets.all(8),
+                              height: screenheight / 17.5,
+                              width: 500,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'No Negatives',
+                                  style: TextStyle(fontSize: 20),
+                                ),
                               ),
                             ),
                           ),
-                        ));
+                        );
                       } else {
                         setState(
                           () {
@@ -425,7 +434,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               SizedBox(
                 width: 60,
                 child: TextField(
-                  
                   //initialValue: '${count[index]}',
                   onChanged: (value) {
                     if (value.isNotEmpty)
@@ -442,8 +450,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   keyboardType: TextInputType.number,
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.add),
+              MaterialButton(
+                color: HexColor('#b2b2b2'),
+                shape: CircleBorder(),
+                child: const Icon(Icons.add),
                 onPressed: () {
                   setState(
                     () {

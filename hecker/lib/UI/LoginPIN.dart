@@ -94,33 +94,33 @@ class _LoginPINState extends State<LoginPIN> {
                   width: screenwidth / 3,
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (DBCrypt()
-                          .checkpw(pinControlleer.text, userCred!.passHash!)) {
-                        // Login
-                        print("right pin");
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => MainPage()),
+                          (route) => false);
+                      // if (DBCrypt()
+                      //     .checkpw(pinControlleer.text, userCred!.passHash!)) {
+                      //   // Login
+                      //   print("right pin");
 
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (context) => MainPage()),
-                            (route) => false);
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text("Error"),
-                              content:
-                                  Text("Seems like pin you entered is wrong!"),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text("OK"))
-                              ],
-                            );
-                          },
-                        );
-                      }
+                      // } else {
+                      //   showDialog(
+                      //     context: context,
+                      //     builder: (BuildContext context) {
+                      //       return AlertDialog(
+                      //         title: Text("Error"),
+                      //         content:
+                      //             Text("Seems like pin you entered is wrong!"),
+                      //         actions: [
+                      //           TextButton(
+                      //               onPressed: () {
+                      //                 Navigator.pop(context);
+                      //               },
+                      //               child: Text("OK"))
+                      //         ],
+                      //       );
+                      //     },
+                      //   );
+                      // }
                     },
                     child: Text(
                       "Login",

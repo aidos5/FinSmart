@@ -99,7 +99,7 @@ class _MyAppState extends State<MyApp> {
         ),
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.white,
-          elevation: 10,
+          elevation: 5,
           iconTheme: IconThemeData(color: AppColors.textColor),
           titleTextStyle: TextStyle(
             color: AppColors.textColor,
