@@ -19,7 +19,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController NameController = TextEditingController();
+  final TextEditingController NumberController = TextEditingController();
   final TextEditingController PasswordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: TextField(
                     showCursor: true,
                     keyboardType: TextInputType.number,
-                    controller: NameController,
+                    controller: NumberController,
                     decoration: InputDecoration(
                       labelText: 'Enter Mobile Number',
                       labelStyle: TextStyle(fontSize: 17),
@@ -80,12 +80,39 @@ class _LoginPageState extends State<LoginPage> {
                   width: screenwidth / 2,
                   child: ElevatedButton(
                     onPressed: (() {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => LoginOTP.withPh(
-                                    phoneNo: NameController.text,
-                                  )),
-                          (route) => false);
+                      if (NumberController.text.length == 10) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) => LoginOTP.withPh(
+                                      phoneNo: NumberController.text,
+                                    )),
+                            (route) => false);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 2),
+                            content: Container(
+                              padding: const EdgeInsets.all(8),
+                              height: screenheight / 17.5,
+                              width: 500,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'Please Enter Correct Number',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }
                     }),
                     child: Text(
                       'LOGIN',

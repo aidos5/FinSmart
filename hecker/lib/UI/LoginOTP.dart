@@ -10,6 +10,7 @@ import 'package:hecker/Password.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hecker/Signup.dart';
+import 'package:hecker/UI/Colors.dart';
 import 'package:hecker/UI/LoginPIN.dart';
 import 'package:localstorage/localstorage.dart';
 
@@ -35,6 +36,7 @@ class _LoginOTPState extends State<LoginOTP> {
 
   var localStorageUser = new LocalStorage('userCred.json');
   var localStorageShop = new LocalStorage('shopDetail.json');
+  Color otpField = Color(0xFFFFFFFF);
 
   @override
   void initState() {
@@ -72,6 +74,7 @@ class _LoginOTPState extends State<LoginOTP> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: OtpTextField(
+                fillColor: otpField,
                 numberOfFields: 6,
                 enabledBorderColor: Colors.black,
                 //set to true to show as box or false to show as dash
@@ -145,6 +148,34 @@ class _LoginOTPState extends State<LoginOTP> {
                       } else {
                         showCreateAccountError();
                       }
+                    } else {
+                      setState(() {
+                        otpField = AppColors.red;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          behavior: SnackBarBehavior.floating,
+                          duration: Duration(seconds: 2),
+                          content: Container(
+                            padding: const EdgeInsets.all(8),
+                            height: screenheight / 17.5,
+                            width: 500,
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'Wrong OTP',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
                     }
                   });
                 }, // end onSubmit

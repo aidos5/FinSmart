@@ -189,11 +189,21 @@ class _ItemsState extends State<Items> {
                                         ),
                                       ],
                                     ),
-                                    MaterialButton(
-                                      onPressed: (() {}),
-                                      child: Text('Update'),
-                                      color: Colors.green,
-                                    )
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: MaterialButton(
+                                        onPressed: (() {}),
+                                        child: Text(
+                                          'Update',
+                                          style: TextStyle(
+                                              color: AppColors.black
+                                                  .withOpacity(0.8),
+                                              fontSize: 17.5,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                        color: Colors.green,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               )
@@ -246,11 +256,21 @@ class _ItemsState extends State<Items> {
                                         ),
                                       ],
                                     ),
-                                    MaterialButton(
-                                      onPressed: (() {}),
-                                      child: Text('Update'),
-                                      color: Colors.green,
-                                    )
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: MaterialButton(
+                                        onPressed: (() {}),
+                                        child: Text(
+                                          'Update',
+                                          style: TextStyle(
+                                              color: AppColors.black
+                                                  .withOpacity(0.8),
+                                              fontSize: 17.5,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                        color: Colors.green,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               );
