@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hecker/Model/BillItem.dart';
+import 'package:hecker/Model/CustomerDetails.dart';
 import 'package:hecker/Model/TabClass.dart';
 import 'package:hecker/Navigation.dart';
 import 'package:hecker/Number.dart';
@@ -24,6 +25,8 @@ import 'package:base_x/base_x.dart';
 import 'Model/ShopDetail.dart';
 import 'Model/lastBillDate.dart';
 import 'package:intl/intl.dart';
+
+import 'package:http/http.dart' as http;
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -559,6 +562,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       tC[currentTabIndex].bill = bill;
       tC[currentTabIndex].showPaymentView = true;
     });
+
+    // GetPaymentLink(bill);
   }
 
   Widget PaymentView(Bill bill) {
@@ -574,7 +579,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 tC[currentTabIndex].showPaymentView = false;
               });
             },
-            child: Text("Back"))
+            child: Text("Back")),
+        ElevatedButton(
+            onPressed: () {
+              getCustomerDetails(bill);
+            },
+            child: Text("Send Payment Link"))
       ],
     );
   }
@@ -594,6 +604,178 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     }
 
     return billID;
+  }
+
+  getCustomerDetails(Bill bill) {
+    TextEditingController nameController = TextEditingController();
+    TextEditingController mailController = TextEditingController();
+    TextEditingController numberController = TextEditingController();
+    TextEditingController addrController = TextEditingController();
+    TextEditingController gstnController = TextEditingController();
+
+    CustomerDetails? cd;
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text("Client Details"),
+              content: SingleChildScrollView(
+                child: Column(children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      // width: width / 1.5,
+                      child: TextField(
+                        showCursor: true,
+                        keyboardType: TextInputType.number,
+                        controller: nameController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter Name',
+                          labelStyle: TextStyle(fontSize: 17),
+                          enabledBorder: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      // width: width / 1.5,
+                      child: TextField(
+                        showCursor: true,
+                        keyboardType: TextInputType.number,
+                        controller: numberController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter Mobile Number',
+                          labelStyle: TextStyle(fontSize: 17),
+                          enabledBorder: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      // width: width / 1.5,
+                      child: TextField(
+                        showCursor: true,
+                        keyboardType: TextInputType.number,
+                        controller: mailController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter Customer Mail',
+                          labelStyle: TextStyle(fontSize: 17),
+                          enabledBorder: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      // width: width / 1.5,
+                      child: TextField(
+                        minLines: 5,
+                        maxLines: 10,
+                        showCursor: true,
+                        keyboardType: TextInputType.number,
+                        controller: addrController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter Address',
+                          labelStyle: TextStyle(fontSize: 17),
+                          enabledBorder: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      // width: width / 1.5,
+                      child: TextField(
+                        showCursor: true,
+                        keyboardType: TextInputType.number,
+                        controller: gstnController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter GSTN',
+                          labelStyle: TextStyle(fontSize: 17),
+                          enabledBorder: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ]),
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    // width: screenwidth / 2,
+                    child: ElevatedButton(
+                      onPressed: (() async {
+                        cd = CustomerDetails(
+                            name: nameController.text,
+                            contactNumber: numberController.text,
+                            contactMail: mailController.text,
+                            address: addrController.text,
+                            gstn: gstnController.text);
+
+                        // Generate payment link
+                        var link = await GetPaymentLink(bill);
+
+                        // Add customer details to firebase
+                        var docuser = FirebaseFirestore.instance
+                            .collection('transactions')
+                            .doc('category')
+                            .collection('pincode')
+                            .doc('shopid')
+                            .collection('customers')
+                            .doc('${cd!.contactNumber}');
+
+                        await docuser.set(cd!.toJson());
+
+                        // Ask to send link through share link
+                        print(link);
+                      }),
+                      child: Text(
+                        'LOGIN',
+                        style: TextStyle(
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ));
+  }
+
+  Future<String?> GetPaymentLink(Bill bill) async {
+    String? mid = shopDetail!.paytmMID;
+    String? mKey = shopDetail!.paytmKey;
+    String? ordID = bill.billID;
+    String? linkName = "Payment";
+    String? linkDescription = "Paying For Order " + ordID;
+    String? amount = bill.totalAmount.toString();
+
+    var response =
+        await http.post(Uri.parse("https://paymentlink.finsmart.workers.dev"),
+            body: jsonEncode({
+              "mid": "oSYKuu42328532937888",
+              "mKey": "7YUK3VFz6qp#9pn8",
+              "ordID": ordID,
+              "linkName": linkName,
+              "linkDescription": linkDescription,
+              "amt": amount
+            }));
+
+    if (response.body.contains('"resultStatus":"SUCCESS"')) {
+      var full = jsonDecode(response.body);
+      var body = full['body'];
+      var paymentLink = body['shortUrl'];
+
+      return paymentLink;
+    }
+
+    return 'failed';
   }
 
   void searchItems(String query) {

@@ -20,6 +20,11 @@ class ShopDetail {
 
   String? upiVPA;
 
+  @JsonKey(ignore: true)
+  String? paytmMID;
+  @JsonKey(ignore: true)
+  String? paytmKey;
+
   ShopDetail();
 
   /// factory.
