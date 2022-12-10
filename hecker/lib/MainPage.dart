@@ -228,19 +228,21 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             onChanged: searchItems,
           ),
         ),
-        SizedBox(
-          width: screenWidth,
-          child: Column(
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: firstopen == true
-                    ? allItems.length
-                    : tC[i].foundItems!.length,
-                itemBuilder: (context, index) => cardmaker(index, i),
-                physics: AlwaysScrollableScrollPhysics(),
-              ),
-            ],
+        Expanded(
+          child: SizedBox(
+            width: screenWidth,
+            child: Column(
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: firstopen == true
+                      ? allItems.length
+                      : tC[i].foundItems!.length,
+                  itemBuilder: (context, index) => cardmaker(index, i),
+                  physics: AlwaysScrollableScrollPhysics(),
+                ),
+              ],
+            ),
           ),
         ),
       ],

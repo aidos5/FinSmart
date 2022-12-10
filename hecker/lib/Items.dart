@@ -104,22 +104,22 @@ class _ItemsState extends State<Items> {
             ),
             body: SingleChildScrollView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: Expanded(
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.search),
-                        hintText: 'Search Item',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide(color: Colors.blueAccent),
-                        ),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: controller,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search),
+                      hintText: 'Search Item',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.blueAccent),
                       ),
-                      onChanged: searchItems,
                     ),
-                    ListView.builder(
+                    onChanged: searchItems,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: firstopen == true
                           ? allItems.length
@@ -276,8 +276,8 @@ class _ItemsState extends State<Items> {
                               );
                       },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );

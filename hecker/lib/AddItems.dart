@@ -97,145 +97,143 @@ class _AddItemsState extends State<AddItems> {
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: SizedBox(
           width: screenwidth,
-          child: Expanded(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    scanResult == null
-                        ? 'No Serial Number'
-                        : 'Serial Number : $scanResult',
-                    style: TextStyle(fontSize: 25),
-                    textAlign: TextAlign.center,
-                  ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  scanResult == null
+                      ? 'No Serial Number'
+                      : 'Serial Number : $scanResult',
+                  style: TextStyle(fontSize: 25),
+                  textAlign: TextAlign.center,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Item Name',
-                      border: OutlineInputBorder(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Item Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  controller: itemName,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                      labelText: 'Item Description',
+                      border: OutlineInputBorder()),
+                  controller: itemDescription,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                      labelText: 'Selling Price',
+                      border: OutlineInputBorder()),
+                  controller: rate,
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                      labelText: 'Quantity', border: OutlineInputBorder()),
+                  controller: quantity,
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                      labelText: 'Taxes', border: OutlineInputBorder()),
+                  controller: taxes,
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Enter Expiry date: ',
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
-                    controller: itemName,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                        labelText: 'Item Description',
-                        border: OutlineInputBorder()),
-                    controller: itemDescription,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                        labelText: 'Selling Price',
-                        border: OutlineInputBorder()),
-                    controller: rate,
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                        labelText: 'Quantity', border: OutlineInputBorder()),
-                    controller: quantity,
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                        labelText: 'Taxes', border: OutlineInputBorder()),
-                    controller: taxes,
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                    SizedBox(
+                      width: screenwidth / 4.5,
+                    ),
+                    SizedBox(
+                      width: screenwidth / 3.8,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => AppColors.lightOrange)),
+                        onPressed: () async {
+                          newDate = await showDatePicker(
+                              context: context,
+                              initialDate: dateTime!,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2200));
+
+                          if (newDate == null) {
+                            newDate = dateTime;
+                          }
+
+                          setState(() => dateTime = newDate);
+                        },
                         child: Text(
-                          'Enter Expiry date: ',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                      SizedBox(
-                        width: screenwidth / 4.5,
-                      ),
-                      SizedBox(
-                        width: screenwidth / 3.8,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateColor.resolveWith(
-                                  (states) => AppColors.lightOrange)),
-                          onPressed: () async {
-                            newDate = await showDatePicker(
-                                context: context,
-                                initialDate: dateTime!,
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2200));
-
-                            if (newDate == null) {
-                              newDate = dateTime;
-                            }
-
-                            setState(() => dateTime = newDate);
-                          },
-                          child: Text(
-                            '${dateTime!.day}/' +
-                                '${dateTime!.month}/' +
-                                '${dateTime!.year}',
-                            style: TextStyle(
-                              color: AppColors.blackText,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          '${dateTime!.day}/' +
+                              '${dateTime!.month}/' +
+                              '${dateTime!.year}',
+                          style: TextStyle(
+                            color: AppColors.blackText,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      )
-                    ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: screenwidth / 5,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                            (states) => AppColors.green)),
+                    onPressed: (() {
+                      SaveAll();
+                    }),
+                    child: Text('Save'),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: screenwidth / 5,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => AppColors.green)),
-                      onPressed: (() {
-                        SaveAll();
-                      }),
-                      child: Text('Save'),
-                    ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: screenwidth / 5,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                            (states) => AppColors.red)),
+                    onPressed: (() {
+                      localStorageItems.deleteItem('items');
+                    }),
+                    child: Text('Delete'),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: screenwidth / 5,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => AppColors.red)),
-                      onPressed: (() {
-                        localStorageItems.deleteItem('items');
-                      }),
-                      child: Text('Delete'),
-                    ),
-                  ),
-                )
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
