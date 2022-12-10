@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import 'ModelItem.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -8,6 +10,9 @@ class BillItem {
   ModelItem item;
   double quantity;
   double totalAmount;
+
+  @JsonKey(ignore: true)
+  TextEditingController quantityEditor = TextEditingController(text: '0');
 
   BillItem({
     required this.item,

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:hecker/Model/UserCredential.dart';
 import 'package:hecker/ShopDetails.dart';
@@ -178,14 +176,14 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                         ),
                       ),
                     ),
-                    CheckboxListTile(
-                        title: Text("Regester as Owner"),
-                        value: isOwner,
-                        onChanged: (value) {
-                          setState(() {
-                            isOwner = value;
-                          });
-                        }),
+                    // CheckboxListTile(
+                    //     title: Text("Regester as Owner"),
+                    //     value: isOwner,
+                    //     onChanged: (value) {
+                    //       setState(() {
+                    //         isOwner = value;
+                    //       });
+                    //     }),
                   ],
                 ),
               ),
@@ -202,21 +200,8 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                       userCred!.gender = selectedGender!;
                       userCred!.dob = '${dob!.day}/${dob!.month}/${dob!.year}';
                       userCred!.regDate = DateTime.now().toString();
-                      userCred!.isOwner = isOwner;
+                      userCred!.isOwner = true;
                       userCred!.address = addressController.text;
-
-                      // If owner set shop id
-                      if (isOwner!) {
-                        String? id =
-                            (int.tryParse(userCred!.phoneNo)! * 37).toString();
-
-                        int iterCount = 12 - id.length;
-                        for (int i = 0; i < iterCount; i++) {
-                          id = "0" + id!;
-                        }
-
-                        userCred!.shopID = id!;
-                      }
 
                       // Store User Creds
                       await localStorage.setItem('user', userCred);

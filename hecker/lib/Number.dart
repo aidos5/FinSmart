@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hecker/OTP.dart';
-import 'main.dart';
 
 import 'Model/UserCredential.dart';
 import 'package:localstorage/localstorage.dart';
 
 class Number extends StatefulWidget {
-  const Number();
+  const Number({Key? key}) : super(key: key);
 
   @override
   State<Number> createState() => _NumberState();

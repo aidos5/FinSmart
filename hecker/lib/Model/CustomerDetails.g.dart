@@ -11,6 +11,7 @@ CustomerDetails _$CustomerDetailsFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String?,
       contactNumber: json['contactNumber'] as String?,
       contactMail: json['contactMail'] as String?,
+      address: json['address'] as String?,
       gstn: json['gstn'] as String?,
     );
 
@@ -19,5 +20,6 @@ Map<String, dynamic> _$CustomerDetailsToJson(CustomerDetails instance) =>
       'name': instance.name,
       'contactNumber': instance.contactNumber,
       'contactMail': instance.contactMail,
+      'address': instance.address,
       'gstn': instance.gstn,
     };

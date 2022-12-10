@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'UserCredential.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class UserCredential {
   // Shop ID associated with
   String shopID = "";

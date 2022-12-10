@@ -3,6 +3,7 @@ import 'package:hecker/AddItems.dart';
 import 'package:hecker/Items.dart';
 import 'package:hecker/main.dart';
 import 'UI/LoginPage.dart';
+import 'UI/BuyStuff/BuyStuff.dart';
 
 class Navigation extends StatefulWidget {
   Navigation({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class _NavigationState extends State<Navigation> {
     Icons.add,
     Icons.analytics_outlined,
     Icons.settings,
+    Icons.shopping_bag,
     Icons.logout,
     Icons.info
   ];
@@ -23,6 +25,7 @@ class _NavigationState extends State<Navigation> {
     'Add Products',
     'Analytics',
     'Settings',
+    'Buy Stuff',
     'Log Out',
     'Info'
   ];
@@ -60,6 +63,18 @@ class _NavigationState extends State<Navigation> {
               ),
               onTap: () {
                 Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_cart),
+              title: const Text(
+                'Buy Stuff',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => BuyStuff()),
+                    (route) => false);
               },
             ),
             ListTile(

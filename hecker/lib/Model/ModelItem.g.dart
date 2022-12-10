@@ -12,7 +12,7 @@ ModelItem _$ModelItemFromJson(Map<String, dynamic> json) => ModelItem(
       description: json['description'] as String,
       quantity: json['quantity'] as int,
       unit: json['unit'] as String? ?? '',
-      rate: json['rate'] as int,
+      rate: (json['rate'] as num).toDouble(),
       taxes: json['taxes'] as int? ?? 0,
       expDate: json['expDate'] as String,
       total: json['total'] as int,
