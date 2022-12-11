@@ -120,7 +120,7 @@ class _MyAppState extends State<MyApp> {
 
   showLoginPage() {
     if (userCred!.passHash.isEmpty) {
-      return LoginPage();
+      return LoginPage(); 
     } else {
       return LoginPIN();
     }

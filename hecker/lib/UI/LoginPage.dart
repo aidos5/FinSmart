@@ -83,9 +83,11 @@ class _LoginPageState extends State<LoginPage> {
                       if (NumberController.text.length == 10) {
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
-                                builder: (context) => LoginOTP.withPh(
-                                      phoneNo: NumberController.text,
-                                    )),
+                              builder: (context) => 
+                              LoginOTP.withPh(
+                                phoneNo: NumberController.text,
+                              ),
+                            ),
                             (route) => false);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

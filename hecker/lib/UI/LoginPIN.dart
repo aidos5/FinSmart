@@ -50,7 +50,7 @@ class _LoginPINState extends State<LoginPIN> {
       appBar: AppBar(title: Text('FinSmart')),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Container(
+        child: SizedBox(
           width: screenwidth,
           height: screenheight,
           child: Column(

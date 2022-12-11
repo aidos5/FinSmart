@@ -56,16 +56,16 @@ class _ShopDetailsState extends State<ShopDetails> {
       appBar: AppBar(title: Text('FinSmart')),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Expanded(
-          child: SizedBox(
-            width: screenwidth,
-            child: Column(
-              children: [
-                const Text(
-                  'Enter Shop Details',
-                  style: TextStyle(fontSize: 37),
-                ),
-                Form(
+        child: SizedBox(
+          width: screenwidth,
+          child: Column(
+            children: [
+              const Text(
+                'Enter Shop Details',
+                style: TextStyle(fontSize: 37),
+              ),
+              Expanded(
+                child: Form(
                   key: formkey,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   child: Column(
@@ -205,44 +205,44 @@ class _ShopDetailsState extends State<ShopDetails> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
-                  child: SizedBox(
-                    height: screenheight / 15,
-                    width: screenwidth / 3,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (formkey.currentState!.validate()) {
-                          shopDetail!.name = nameCont.text;
-                          shopDetail!.address = addrCont.text;
-                          shopDetail!.pincode = pincodeCont.text;
-                          shopDetail!.contactNumber = numberCont.text;
-                          shopDetail!.contactMail = mailCont.text;
-                          shopDetail!.gstn = gstnCont.text;
-                          shopDetail!.categoryCode = selectedCategory;
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
+                child: SizedBox(
+                  height: screenheight / 15,
+                  width: screenwidth / 3,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (formkey.currentState!.validate()) {
+                        shopDetail!.name = nameCont.text;
+                        shopDetail!.address = addrCont.text;
+                        shopDetail!.pincode = pincodeCont.text;
+                        shopDetail!.contactNumber = numberCont.text;
+                        shopDetail!.contactMail = mailCont.text;
+                        shopDetail!.gstn = gstnCont.text;
+                        shopDetail!.categoryCode = selectedCategory;
 
-                          await localStorage.setItem('shop', shopDetail);
+                        await localStorage.setItem('shop', shopDetail);
 
-                          print(await localStorage.getItem('shop'));
+                        print(await localStorage.getItem('shop'));
 
-                          //print("successful");
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => AccountDone()),
-                              (route) => false);
+                        //print("successful");
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) => AccountDone()),
+                            (route) => false);
 
-                          return;
-                        } else {
-                          print("UnSuccessfull");
-                        }
-                      },
-                      child: Text("Submit"),
-                    ),
+                        return;
+                      } else {
+                        print("UnSuccessfull");
+                      }
+                    },
+                    child: Text("Submit"),
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
       ),

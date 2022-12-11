@@ -72,7 +72,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     print("Lowde");
     LoadItems();
 
-    tabController = new TabController(length: maxBillCount, vsync: this);
+    tabController = TabController(length: maxBillCount, vsync: this);
     tabController!.addListener(() {
       setState(() {
         currentTabIndex = tabController!.index;
@@ -122,7 +122,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         tC[i].count = [];
         tC[i].showPaymentView = false;
         for (int j = 0; j < allItems.length; j++) {
-          tC[i].quantityEditor!.add(new TextEditingController());
+          tC[i].quantityEditor!.add(TextEditingController());
           tC[i].count!.add(0);
         }
       }
@@ -215,17 +215,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     displayTabs = [];
     for (int i = 0; i < maxBillCount; i++) {
-      // tC.add(TabClass());
-      // setState(() {
-      //   tC[i].foundItems = List.from(allItems);
-
-      //   tC[i].quantityEditor = [];
-      //   tC[i].count = [];
-      //   for (int i = 0; i < allItems.length; i++) {
-      //     tC[i].quantityEditor!.add(new TextEditingController());
-      //     tC[i].count!.add(0);
-      //   }
-      // });
+      
 
       tC[i].billtabs = Tab(
           child: tC[i].showPaymentView! == false
@@ -515,7 +505,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     for (int i = 0; i < curTab.count!.length; i++) {
       if (curTab.count![i] != 0) {
-        items.add(new BillItem(
+        items.add(BillItem(
             item: curTab.allItems![i],
             quantity: curTab.count![i].toDouble(),
             totalAmount:
@@ -542,7 +532,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     //print(bill.totalCost);
 
     var billJSON = bill.toJson(); //bill.toJson().toString();
-    print("Bill : " + billJSON.toString());
+    //print("Bill : " + billJSON.toString());
     final docuser = FirebaseFirestore.instance
         .collection('transactions')
         .doc('category')
@@ -802,16 +792,5 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     });
   }
 
-  static Stream<List<ModelItem>> readItem() {
-    return FirebaseFirestore.instance
-        .collection('transactions')
-        .doc('category')
-        .collection('pincode')
-        .doc('shopid')
-        .collection('items')
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => ModelItem.fromJson(doc.data()))
-            .toList());
-  }
+  
 }

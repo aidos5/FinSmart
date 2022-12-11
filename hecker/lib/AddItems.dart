@@ -132,8 +132,7 @@ class _AddItemsState extends State<AddItems> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: const InputDecoration(
-                      labelText: 'Selling Price',
-                      border: OutlineInputBorder()),
+                      labelText: 'Selling Price', border: OutlineInputBorder()),
                   controller: rate,
                   keyboardType: TextInputType.number,
                 ),

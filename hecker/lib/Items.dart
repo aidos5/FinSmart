@@ -118,164 +118,162 @@ class _ItemsState extends State<Items> {
                     ),
                     onChanged: searchItems,
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: firstopen == true
-                          ? allItems.length
-                          : foundItems.length,
-                      itemBuilder: (context, index) {
-                        final screenwidth = MediaQuery.of(context).size.width;
-                        List<Color> cardColor = [
-                          AppColors.blueCard,
-                          AppColors.pinkCard,
-                          AppColors.orangeCard
-                        ];
-                        return firstopen == false
-                            ? Card(
-                                color: cardColor[index],
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Name : ${foundItems[index].name}',
-                                              style: TextStyle(
-                                                  color: AppColors.black
-                                                      .withOpacity(0.8),
-                                                  fontSize: 20,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: screenwidth / 5,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Quantity left: ${foundItems[index].quantity} ${foundItems[index].unit}',
-                                              style: TextStyle(
-                                                  color: AppColors.black
-                                                      .withOpacity(0.8),
-                                                  fontSize: 20,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Selling Price : ${foundItems[index].rate}',
-                                              style: TextStyle(
-                                                  color: AppColors.black
-                                                      .withOpacity(0.8),
-                                                  fontSize: 20,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: MaterialButton(
-                                        onPressed: (() {}),
-                                        child: Text(
-                                          'Update',
-                                          style: TextStyle(
-                                              color: AppColors.black
-                                                  .withOpacity(0.8),
-                                              fontSize: 17.5,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Card(
-                                color: cardColor[index],
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            'Name : ${allItems[index].name}',
-                                            style: TextStyle(
-                                                color: AppColors.black
-                                                    .withOpacity(0.8),
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                          SizedBox(
-                                            width: screenwidth / 5,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Quantity left: ${allItems[index].quantity} ${allItems[index].unit}',
-                                              style: TextStyle(
-                                                  color: AppColors.black
-                                                      .withOpacity(0.8),
-                                                  fontSize: 20,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Row(
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: firstopen == true
+                        ? allItems.length
+                        : foundItems.length,
+                    itemBuilder: (context, index) {
+                      final screenwidth = MediaQuery.of(context).size.width;
+                      List<Color> cardColor = [
+                        AppColors.blueCard,
+                        AppColors.pinkCard,
+                        AppColors.orangeCard
+                      ];
+                      return firstopen == false
+                          ? Card(
+                              color: cardColor[index],
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Text(
-                                            'Selling Price : ${allItems[index].rate}',
+                                            'Name : ${foundItems[index].name}',
                                             style: TextStyle(
                                                 color: AppColors.black
                                                     .withOpacity(0.8),
                                                 fontSize: 20,
-                                                fontWeight: FontWeight.normal),
+                                                fontWeight:
+                                                    FontWeight.normal),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: screenwidth / 5,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            'Quantity left: ${foundItems[index].quantity} ${foundItems[index].unit}',
+                                            style: TextStyle(
+                                                color: AppColors.black
+                                                    .withOpacity(0.8),
+                                                fontSize: 20,
+                                                fontWeight:
+                                                    FontWeight.normal),
                                           ),
                                         ),
                                       ],
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: MaterialButton(
-                                        onPressed: (() {}),
-                                        child: Text(
-                                          'Update',
+                                  ),
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            'Selling Price : ${foundItems[index].rate}',
+                                            style: TextStyle(
+                                                color: AppColors.black
+                                                    .withOpacity(0.8),
+                                                fontSize: 20,
+                                                fontWeight:
+                                                    FontWeight.normal),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: MaterialButton(
+                                      onPressed: (() {}),
+                                      child: Text(
+                                        'Update',
+                                        style: TextStyle(
+                                            color: AppColors.black
+                                                .withOpacity(0.8),
+                                            fontSize: 17.5,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Card(
+                              color: cardColor[index],
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Name : ${allItems[index].name}',
                                           style: TextStyle(
                                               color: AppColors.black
                                                   .withOpacity(0.8),
-                                              fontSize: 17.5,
+                                              fontSize: 20,
                                               fontWeight: FontWeight.normal),
                                         ),
-                                        color: Colors.green,
-                                      ),
+                                        SizedBox(
+                                          width: screenwidth / 5,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            'Quantity left: ${allItems[index].quantity} ${allItems[index].unit}',
+                                            style: TextStyle(
+                                                color: AppColors.black
+                                                    .withOpacity(0.8),
+                                                fontSize: 20,
+                                                fontWeight:
+                                                    FontWeight.normal),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              );
-                      },
-                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          'Selling Price : ${allItems[index].rate}',
+                                          style: TextStyle(
+                                              color: AppColors.black
+                                                  .withOpacity(0.8),
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: MaterialButton(
+                                      onPressed: (() {}),
+                                      child: Text(
+                                        'Update',
+                                        style: TextStyle(
+                                            color: AppColors.black
+                                                .withOpacity(0.8),
+                                            fontSize: 17.5,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                    },
                   ),
                 ],
               ),
