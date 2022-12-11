@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hecker/MainPage.dart';
+import 'package:hecker/MongoDB/MongoDB.dart';
 import 'package:hecker/UI/LoginPIN.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:localstorage/localstorage.dart';
-import 'package:passwordfield/passwordfield.dart';
 import 'Model/UserCredential.dart';
-import 'Number.dart';
 import 'UI/Colors.dart';
 import 'UI/LoginPage.dart';
-import 'UI/Passcode.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'UI/app_fonts.dart';
 import 'firebase_options.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Ideal time to initialize
   // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  await MongoDB.init();
 
   runApp(MyApp());
 }

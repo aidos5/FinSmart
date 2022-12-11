@@ -5,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:hecker/Model/ShopDetail.dart';
 import 'package:hecker/Model/UserCredential.dart' as UserCredential;
+import 'package:hecker/MongoDB/MongoDB.dart';
 import 'package:hecker/Number.dart';
-import 'package:hecker/Password.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hecker/Signup.dart';
 import 'package:hecker/UI/Colors.dart';
 import 'package:hecker/UI/LoginPIN.dart';
 import 'package:localstorage/localstorage.dart';
@@ -88,57 +87,89 @@ class _LoginOTPState extends State<LoginOTP> {
                       .then((value) async {
                     if (value.user != null) {
                       // Get user data and store it in local storage
-                      var userCredDoc = FirebaseFirestore.instance
-                          .collection("userCreds")
-                          .doc("${phoneNo}");
+                      // var userCredDoc = FirebaseFirestore.instance
+                      //     .collection("userCreds")
+                      //     .doc("${phoneNo}");
 
-                      var userCredDocData = await userCredDoc.get();
+                      var userDB = await MongoDB.db!
+                          .collection('users')
+                          .findOne({'phoneNo': phoneNo!});
 
-                      if (userCredDocData.exists) {
+                      // print(phoneNo! +
+                      //     " " +
+                      //     jsonEncode(userDB) +
+                      //     "  " +
+                      //     (userDB != null).toString());
+
+                      // if(userDB != null)
+                      // {
+
+                      // }
+
+                      // var userCredDocData = await userCredDoc.get();
+
+                      //if (userCredDocData.exists) {
+                      if (userDB != null) {
+                        // UserCredential.UserCredential userCred =
+                        //     UserCredential.UserCredential.fromJson(
+                        //         userCredDocData.data()!);
+
                         UserCredential.UserCredential userCred =
-                            UserCredential.UserCredential.fromJson(
-                                userCredDocData.data()!);
-
+                            UserCredential.UserCredential.fromJson(userDB);
                         await localStorageUser.setItem('user', userCred);
 
-                        var shopDetailDoc = userCredDoc
-                            .collection("shopDetail")
-                            .doc("shopDetail");
+                        // var shopDetailDoc = userCredDoc
+                        //     .collection("shopDetail")
+                        //     .doc("shopDetail");
 
-                        var shopDetailDocData = await shopDetailDoc.get();
+                        // var shopDetailDocData = await shopDetailDoc.get();
 
-                        if (!shopDetailDocData.exists) {
+                        var shopDetDB = await MongoDB.db!
+                            .collection('shops')
+                            .findOne({'id': userCred.shopID});
+
+                        // print(shopDetDB);
+                        // if (!shopDetailDocData.exists) {
+                        if (shopDetDB == null) {
+                          // print("object null");
                           showCreateAccountError();
                           return;
                         }
 
-                        await localStorageShop.setItem('shop',
-                            ShopDetail.fromJson(shopDetailDocData.data()!));
+                        // ShopDetail shopDetail = ShopDetail.fromJson(shopDetailDocData.data()!)
+                        ShopDetail shopDetail = ShopDetail.fromJson(shopDetDB!);
+                        await localStorageShop.setItem('shop', shopDetail);
 
-                        FirebaseFirestore.instance
-                            .collection('transactions')
-                            .doc('category')
-                            .collection('pincode')
-                            .doc('shopid')
-                            .collection('items')
-                            .snapshots()
-                            .map((snapshot) => snapshot.docs
-                                .map((doc) => ModelItem.fromJson(doc.data()))
-                                .toList())
-                            .listen((event) async {
-                          List<ModelItem> allItems = [];
-                          for (ModelItem mi in event) {
-                            allItems.add(mi);
-                          }
+                        // List<dynamic> allItemString = shopDetail.allItems
+                        //     .map((e) => jsonEncode(e.toJson()))
+                        //     .toList();
+                        // await localStorageItems.setItem(
+                        //     'items', jsonEncode(allItemString));
 
-                          List<dynamic> allItemString = allItems
-                              .map((e) => jsonEncode(e.toJson()))
-                              .toList();
-                          await localStorageItems.setItem(
-                              'items', jsonEncode(allItemString));
+                        // FirebaseFirestore.instance
+                        //     .collection('transactions')
+                        //     .doc('category')
+                        //     .collection('pincode')
+                        //     .doc('shopid')
+                        //     .collection('items')
+                        //     .snapshots()
+                        //     .map((snapshot) => snapshot.docs
+                        //         .map((doc) => ModelItem.fromJson(doc.data()))
+                        //         .toList())
+                        //     .listen((event) async {
+                        //   List<ModelItem> allItems = [];
+                        //   for (ModelItem mi in event) {
+                        //     allItems.add(mi);
+                        //   }
 
-                          print("yeah boi loaded items");
-                        });
+                        //   List<dynamic> allItemString = allItems
+                        //       .map((e) => jsonEncode(e.toJson()))
+                        //       .toList();
+                        //   await localStorageItems.setItem(
+                        //       'items', jsonEncode(allItemString));
+
+                        //   print("yeah boi loaded items");
+                        // });
 
                         print("You are logged in!\n" + value.toString());
 

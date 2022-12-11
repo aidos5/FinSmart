@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:hecker/Model/UserCredential.dart';
 import 'package:hecker/ShopDetails.dart';
@@ -67,128 +65,126 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                 'Enter Personal Details',
                 style: TextStyle(fontSize: 37),
               ),
-              Expanded(
-                child: Form(
-                  key: formkey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: nameController,
-                          decoration: const InputDecoration(
-                              labelText: 'Your Name',
-                              border: OutlineInputBorder()),
-                          validator: (value) {
-                            if (value != null && value.isEmpty) {
-                              return 'Enter Your Name';
-                            } else {
-                              return null;
-                            }
-                          },
-                        ),
+              Form(
+                key: formkey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                            labelText: 'Your Name',
+                            border: OutlineInputBorder()),
+                        validator: (value) {
+                          if (value != null && value.isEmpty) {
+                            return 'Enter Your Name';
+                          } else {
+                            return null;
+                          }
+                        },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          keyboardType: TextInputType.multiline,
-                          maxLines: 5,
-                          controller: addressController,
-                          decoration: const InputDecoration(
-                              labelText: 'Your Address',
-                              border: OutlineInputBorder()),
-                          validator: (value) {
-                            if (value != null && value.isEmpty) {
-                              return 'Enter Your Address';
-                            } else {
-                              return null;
-                            }
-                          },
-                        ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 5,
+                        controller: addressController,
+                        decoration: const InputDecoration(
+                            labelText: 'Your Address',
+                            border: OutlineInputBorder()),
+                        validator: (value) {
+                          if (value != null && value.isEmpty) {
+                            return 'Enter Your Address';
+                          } else {
+                            return null;
+                          }
+                        },
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 18,
-                            left: screenwidth / 4,
-                            right: screenwidth / 4),
-                        child: DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 18,
+                          left: screenwidth / 4,
+                          right: screenwidth / 4),
+                      child: DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          value: selectedGender,
-                          items: Genders.map(
-                            ((item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
-                                    style: TextStyle(fontSize: 15),
-                                  ),
-                                )),
-                          ).toList(),
-                          onChanged: (item) =>
-                              setState(() => selectedGender = item),
-                          validator: (value) {
-                            if (value != null && value == 'Select Gender') {
-                              return 'Enter Your Gender';
-                            } else
-                              return null;
-                          },
                         ),
-                      ),
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(25),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Enter your Date Of Birth',
-                                style: TextStyle(fontSize: 17),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              MaterialButton(
-                                color: HexColor('#ffe8d7'),
-                                onPressed: () async {
-                                  newDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: dob!,
-                                      firstDate: DateTime(1900),
-                                      lastDate: DateTime(2200));
-              
-                                  if (newDate == null)
-                                    return;
-                                  else {
-                                    setState(() => dob = newDate);
-                                  }
-                                },
+                        value: selectedGender,
+                        items: Genders.map(
+                          ((item) => DropdownMenuItem<String>(
+                                value: item,
                                 child: Text(
-                                  '${dob!.day}/'
-                                  '${dob!.month}/'
-                                  '${dob!.year}',
-                                  style: TextStyle(
-                                    color: AppColors.darkText,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  item,
+                                  style: TextStyle(fontSize: 15),
                                 ),
-                              )
-                            ],
-                          ),
+                              )),
+                        ).toList(),
+                        onChanged: (item) =>
+                            setState(() => selectedGender = item),
+                        validator: (value) {
+                          if (value != null && value == 'Select Gender') {
+                            return 'Enter Your Gender';
+                          } else
+                            return null;
+                        },
+                      ),
+                    ),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(25),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Enter your Date Of Birth',
+                              style: TextStyle(fontSize: 17),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            MaterialButton(
+                              color: HexColor('#ffe8d7'),
+                              onPressed: () async {
+                                newDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: dob!,
+                                    firstDate: DateTime(1900),
+                                    lastDate: DateTime(2200));
+
+                                if (newDate == null)
+                                  return;
+                                else {
+                                  setState(() => dob = newDate);
+                                }
+                              },
+                              child: Text(
+                                '${dob!.day}/'
+                                '${dob!.month}/'
+                                '${dob!.year}',
+                                style: TextStyle(
+                                  color: AppColors.darkText,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       ),
-                      CheckboxListTile(
-                          title: Text("Regester as Owner"),
-                          value: isOwner,
-                          onChanged: (value) {
-                            setState(() {
-                              isOwner = value;
-                            });
-                          }),
-                    ],
-                  ),
+                    ),
+                    // CheckboxListTile(
+                    //     title: Text("Regester as Owner"),
+                    //     value: isOwner,
+                    //     onChanged: (value) {
+                    //       setState(() {
+                    //         isOwner = value;
+                    //       });
+                    //     }),
+                  ],
                 ),
               ),
               SizedBox(
@@ -204,21 +200,8 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                       userCred!.gender = selectedGender!;
                       userCred!.dob = '${dob!.day}/${dob!.month}/${dob!.year}';
                       userCred!.regDate = DateTime.now().toString();
-                      userCred!.isOwner = isOwner;
+                      userCred!.isOwner = true;
                       userCred!.address = addressController.text;
-
-                      // If owner set shop id
-                      if (isOwner!) {
-                        String? id =
-                            (int.tryParse(userCred!.phoneNo)! * 37).toString();
-
-                        int iterCount = 12 - id.length;
-                        for (int i = 0; i < iterCount; i++) {
-                          id = "0" + id!;
-                        }
-
-                        userCred!.shopID = id!;
-                      }
 
                       // Store User Creds
                       await localStorage.setItem('user', userCred);

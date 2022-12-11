@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:hecker/Model/ModelItem.dart';
+import 'package:hecker/Model/UserCredential.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'ShopDetail.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class ShopDetail {
   String? id;
 
@@ -15,10 +17,18 @@ class ShopDetail {
   String? contactNumber;
   String? contactMail;
 
-  String? categoryCode;
+  String? shopType;
   String? gstn;
 
   String? upiVPA;
+
+  List<String>? proximityHashes;
+  String? geoHash;
+
+  UserCredential? owner;
+  List<UserCredential>? workers;
+
+  List<ModelItem>? allItems;
 
   @JsonKey(ignore: true)
   String? paytmMID;

@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hecker/Model/ShopDetail.dart';
 import 'package:hecker/Model/UserCredential.dart';
-import 'package:hecker/main.dart';
+import 'package:hecker/MongoDB/MongoDB.dart';
 import 'package:localstorage/localstorage.dart';
 import 'UI/LoginPage.dart';
 
@@ -63,59 +63,67 @@ class _AccountDoneState extends State<AccountDone> {
     }
 
     shopDetail!.id = shopID;
-    userCred!.shopID = shopID ?? "";
+    userCred!.shopID = shopID;
 
     await localStorageShop.setItem('shop', shopDetail);
     await localStorageUser.setItem('user', userCred);
 
-    var doc = db
-        .collection("transactions")
-        .doc("${shopDetail!.categoryCode}")
-        .collection("${shopDetail!.pincode}")
-        .doc("${shopID}");
+    // var doc = db
+    //     .collection("transactions")
+    //     .doc("${shopDetail!.shopType}")
+    //     .collection("${shopDetail!.pincode}")
+    //     .doc("${shopID}");
 
-    // Set shop details
-    var finalDoc = await doc.set(shopDetail!.toJson());
+    // // Set shop details
+    // var finalDoc = await doc.set(shopDetail!.toJson());
 
     if (userCred!.isOwner!) {
-      var ownerDoc = db
-          .collection("transactions")
-          .doc("${shopDetail!.categoryCode}")
-          .collection("${shopDetail!.pincode}")
-          .doc("${shopID}")
-          .collection("people")
-          .doc("ownerDetails");
+      // var ownerDoc = db
+      //     .collection("transactions")
+      //     .doc("${shopDetail!.shopType}")
+      //     .collection("${shopDetail!.pincode}")
+      //     .doc("${shopID}")
+      //     .collection("people")
+      //     .doc("ownerDetails");
 
-      var userCredDoc = db.collection("userCreds").doc("${userCred!.phoneNo}");
-      var shopDetailDoc =
-          userCredDoc.collection("shopDetail").doc("shopDetail");
+      // var userCredDoc = db.collection("userCreds").doc("${userCred!.phoneNo}");
+      // var shopDetailDoc =
+      //     userCredDoc.collection("shopDetail").doc("shopDetail");
 
-      await ownerDoc.set(userCred!.toJson());
-      await userCredDoc.set(userCred!.toJson());
-      await shopDetailDoc.set(shopDetail!.toJson());
+      // await ownerDoc.set(userCred!.toJson());
+      // await userCredDoc.set(userCred!.toJson());
+      // await shopDetailDoc.set(shopDetail!.toJson());
+
+      shopDetail!.owner = userCred!;
     } else {
-      var workerDoc = db
-          .collection("transactions")
-          .doc("${shopDetail!.categoryCode}")
-          .collection("${shopDetail!.pincode}")
-          .doc("${shopID}")
-          .collection("people")
-          .doc("worker_${userCred!.phoneNo}");
+      // var workerDoc = db
+      //     .collection("transactions")
+      //     .doc("${shopDetail!.shopType}")
+      //     .collection("${shopDetail!.pincode}")
+      //     .doc("${shopID}")
+      //     .collection("people")
+      //     .doc("worker_${userCred!.phoneNo}");
 
-      var userCredDoc = db.collection("userCreds").doc("${userCred!.phoneNo}");
-      var shopDetailDoc =
-          userCredDoc.collection("shopDetail").doc("shopDetail");
+      // var userCredDoc = db.collection("userCreds").doc("${userCred!.phoneNo}");
+      // var shopDetailDoc =
+      //     userCredDoc.collection("shopDetail").doc("shopDetail");
 
-      await workerDoc.set(userCred!.toJson());
-      await userCredDoc.set(userCred!.toJson());
-      await shopDetailDoc.set(shopDetail!.toJson());
+      // await workerDoc.set(userCred!.toJson());
+      // await userCredDoc.set(userCred!.toJson());
+      // await shopDetailDoc.set(shopDetail!.toJson());
+
+      
     }
+
+    // Update data to mongo db
+    await MongoDB.db!.collection('users').insertOne(userCred!.toJson());//.catchError((e) => print(e));
+    await MongoDB.db!.collection('shops').insertOne(shopDetail!.toJson());//.catchError((e) => print(e));
 
     setState(() {
       registered = true;
     });
 
-    super.initState();
+    // super.initState();
   }
 
   Future<String?> GetShopID() async {

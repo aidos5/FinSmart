@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'ModelItem.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class ModelItem {
   String name;
   String description;
@@ -11,7 +11,7 @@ class ModelItem {
   String id;
 
   String unit;
-  int rate;
+  double rate;
   int taxes;
   String expDate;
   int total;

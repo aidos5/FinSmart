@@ -8,21 +8,13 @@ class TabClass {
   List<TextEditingController>? quantityEditor = [];
   List<ModelItem>? allItems;
   List<ModelItem>? foundItems;
-  List<ModelItem>? billedItems;
-  List<Map<String, dynamic>>? billJson;
-  String? billNo;
-  int? totalCost;
   Bill? bill;
 
   bool? showPaymentView = false;
 
   TabClass(
       {this.foundItems,
-      this.billedItems,
       this.billtabs,
-      this.billJson,
-      this.billNo,
-      this.totalCost,
       this.count,
       this.quantityEditor,
       this.showPaymentView,

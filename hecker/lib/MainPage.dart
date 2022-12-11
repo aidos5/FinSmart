@@ -12,7 +12,7 @@ import 'package:hecker/Model/CustomerDetails.dart';
 import 'package:hecker/Model/TabClass.dart';
 import 'package:hecker/Navigation.dart';
 import 'package:hecker/Number.dart';
-import 'package:hecker/Payments.dart';
+import 'package:hecker/UI/BuyStuff/BuyStuffPayments.dart';
 import 'package:hecker/UI/Colors.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -69,16 +69,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    print("Lowde");
     LoadItems();
 
-    tabController = TabController(length: maxBillCount, vsync: this);
+    tabController = new TabController(length: maxBillCount, vsync: this);
     tabController!.addListener(() {
       setState(() {
         currentTabIndex = tabController!.index;
       });
     });
-    getDate();
+
     super.initState();
   }
 
@@ -95,15 +94,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Future LoadItems() async {
-    // setState(() {
-    //   for (int i = 0; i < maxBillCount; i++) {
-    //     tC.add(TabClass(
-    //         billtabs: Tab(
-    //       text: "Loading...",
-    //     )));
-    //   }
-    // });
-
     var temp = await (localStorageItems.getItem('items'));
     if (temp != null) {
       List allItemString = (jsonDecode(temp) as List<dynamic>);
@@ -122,28 +112,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         tC[i].count = [];
         tC[i].showPaymentView = false;
         for (int j = 0; j < allItems.length; j++) {
-          tC[i].quantityEditor!.add(TextEditingController());
+          tC[i].quantityEditor!.add(new TextEditingController());
           tC[i].count!.add(0);
         }
       }
     });
 
     isInit = true;
-  }
-
-  void getDate() async {
-    var l = await localStoragebillDate.getItem('lastBillDate');
-    if (l == null) {
-      await localStoragebillDate.setItem('lastBillDate', new lastBillDate());
-    }
-
-    lBD = await lastBillDate
-        .fromJson(localStoragebillDate.getItem('lastBillDate'));
-    print(lBD!.lastBill);
-    print(lBD!.toJson());
-
-    // shopID = ShopDetail.fromJson(await storage.getItem('shop')).id as String;
-    // print(shopID);
   }
 
   final controller = TextEditingController();
@@ -215,7 +190,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     displayTabs = [];
     for (int i = 0; i < maxBillCount; i++) {
-      
+      // tC.add(TabClass());
+      // setState(() {
+      //   tC[i].foundItems = List.from(allItems);
+
+      //   tC[i].quantityEditor = [];
+      //   tC[i].count = [];
+      //   for (int i = 0; i < allItems.length; i++) {
+      //     tC[i].quantityEditor!.add(new TextEditingController());
+      //     tC[i].count!.add(0);
+      //   }
+      // });
 
       tC[i].billtabs = Tab(
           child: tC[i].showPaymentView! == false
@@ -505,7 +490,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     for (int i = 0; i < curTab.count!.length; i++) {
       if (curTab.count![i] != 0) {
-        items.add(BillItem(
+        items.add(new BillItem(
             item: curTab.allItems![i],
             quantity: curTab.count![i].toDouble(),
             totalAmount:
@@ -528,27 +513,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         customerNumber: "customerNumber",
         customerAddress: "customerAddress",
         customerGSTN: "customerGSTN");
-
-    //print(bill.totalCost);
-
-    var billJSON = bill.toJson(); //bill.toJson().toString();
-    //print("Bill : " + billJSON.toString());
-    final docuser = FirebaseFirestore.instance
-        .collection('transactions')
-        .doc('category')
-        .collection('pincode')
-        .doc('shopid')
-        .collection('bills')
-        .doc('offlineBills')
-        .collection("day2")
-        .doc("part1");
-
-    List<dynamic> billArr = [];
-    billArr.add(billJSON);
-
-    // Store it in local storage
-    await docuser.set(
-        {'bills': FieldValue.arrayUnion(billArr)}, SetOptions(merge: true));
 
     setState(() {
       tC[currentTabIndex].bill = bill;
@@ -576,9 +540,49 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             onPressed: () {
               getCustomerDetails(bill);
             },
-            child: Text("Send Payment Link"))
+            child: Text("Send Payment Link")),
+        ElevatedButton(
+            onPressed: () async {
+              await uploadBill(bill);
+
+              setState(() {
+                tC[currentTabIndex].bill = null;
+
+                tC[currentTabIndex].count!.forEach((element) {
+                  element = 0;
+                });
+
+                tC[currentTabIndex].quantityEditor!.forEach((element) {
+                  element = TextEditingController(text: '0');
+                });
+
+                tC[currentTabIndex].showPaymentView = false;
+              });
+            },
+            child: Text("Next"))
       ],
     );
+  }
+
+  Future uploadBill(Bill bill) async {
+    var billJSON = bill.toJson();
+
+    final docuser = FirebaseFirestore.instance
+        .collection('transactions')
+        .doc('category')
+        .collection('pincode')
+        .doc('shopid')
+        .collection('bills')
+        .doc('offlineBills')
+        .collection("day2")
+        .doc("part1");
+
+    List<dynamic> billArr = [];
+    billArr.add(billJSON);
+
+    // Store it in local storage
+    await docuser.set(
+        {'bills': FieldValue.arrayUnion(billArr)}, SetOptions(merge: true));
   }
 
   String GetBillID(BigInt n) {
@@ -791,6 +795,4 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       }
     });
   }
-
-  
 }

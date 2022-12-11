@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hecker/MainPage.dart';
 import 'package:hecker/UI/Colors.dart';
 import 'package:hecker/UI/LoginOTP.dart';
-import 'package:hexcolor/hexcolor.dart';
-import 'package:passwordfield/passwordfield.dart';
 import 'package:hecker/Number.dart';
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hecker/firebase_options.dart';
+// Check if user exists here in this step only
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -30,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'FinSmart',
           style: TextStyle(
             color: AppColors.primaryColor,
@@ -63,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                     showCursor: true,
                     keyboardType: TextInputType.number,
                     controller: NumberController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Enter Mobile Number',
                       labelStyle: TextStyle(fontSize: 17),
                       enabledBorder: OutlineInputBorder(),
@@ -116,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       }
                     }),
-                    child: Text(
+                    child: const Text(
                       'LOGIN',
                       style: TextStyle(
                         fontSize: 24,
@@ -125,8 +119,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: Text(
                   'Not Registered?',
                   style: TextStyle(
@@ -142,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                         MaterialPageRoute(builder: (context) => Number()),
                         (route) => false);
                   }),
-                  child: Text(
+                  child: const Text(
                     'Sign In',
                     style: TextStyle(
                       fontSize: 24,
